@@ -35,7 +35,7 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: "Car Name",
+                  labelText: 'Car Name',
                   border: OutlineInputBorder()
               ),
             ),
@@ -44,7 +44,7 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: colorController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: "Body Color",
+                  labelText: 'Body Color',
                   border: OutlineInputBorder()
               ),
             ),
@@ -53,7 +53,7 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: milesController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                  labelText: "Total Miles",
+                  labelText: 'Total Miles',
                   border: OutlineInputBorder()
               ),
             ),
@@ -72,7 +72,7 @@ class _AddCarPageState extends State<AddCarPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Select Year"),
+                          title: Text('Select Year'),
                           content: Container(
                             width: 300,
                             height: 300,

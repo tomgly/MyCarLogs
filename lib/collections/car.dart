@@ -6,11 +6,11 @@ part 'car.g.dart';
 class Car {
   Id id = Isar.autoIncrement;
 
-  String? name;
+  late String? name;
 
-  String? color;
+  late String? color;
 
-  String? totalMiles;
+  late String? totalMiles;
 
-  String? year;
+  late String? year;
 }

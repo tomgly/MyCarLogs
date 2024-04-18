@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:mycarlog/collections/fueling.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'collections/car.dart';
@@ -10,7 +11,7 @@ void main() async {
 
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [CarSchema],
+    [CarSchema, FuelingSchema],
     directory: dir.path,
   );
 

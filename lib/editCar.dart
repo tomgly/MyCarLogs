@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
 import 'collections/car.dart';
+import 'collections/fueling.dart';
 import 'main.dart';
 
 class EditPage extends StatefulWidget {
@@ -25,10 +26,10 @@ class _EditPageState extends State<EditPage> {
   void initState() {
     super.initState();
     car = widget.car;
-    nameController = TextEditingController(text: car.name ?? "NO Name");
-    colorController = TextEditingController(text: car.color ?? "No Color");
-    milesController = TextEditingController(text: car.totalMiles ?? "No Miles");
-    yearController = TextEditingController(text: car.year ?? "No Year");
+    nameController = TextEditingController(text: car.name ?? 'NO Name');
+    colorController = TextEditingController(text: car.color ?? 'No Color');
+    milesController = TextEditingController(text: car.totalMiles ?? 'No Miles');
+    yearController = TextEditingController(text: car.year ?? 'No Year');
   }
 
   @override
@@ -48,7 +49,7 @@ class _EditPageState extends State<EditPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: "Car Name",
+                  labelText: 'Car Name',
                   border: OutlineInputBorder()
               ),
             ),
@@ -57,7 +58,7 @@ class _EditPageState extends State<EditPage> {
               controller: colorController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: "Body Color",
+                  labelText: 'Body Color',
                   border: OutlineInputBorder()
               ),
             ),
@@ -66,7 +67,7 @@ class _EditPageState extends State<EditPage> {
               controller: milesController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                  labelText: "Total Miles",
+                  labelText: 'Total Miles',
                   border: OutlineInputBorder()
               ),
             ),
@@ -85,7 +86,7 @@ class _EditPageState extends State<EditPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text("Select Year"),
+                          title: Text('Select Year'),
                           content: Container(
                             width: 300,
                             height: 300,
@@ -93,7 +94,7 @@ class _EditPageState extends State<EditPage> {
                               firstDate: DateTime(1980),
                               lastDate: DateTime(2024),
                               //initialDate: DateTime.now(),
-                              selectedDate: DateFormat('yyyy').parse(car.year ?? "yyyy"),
+                              selectedDate: DateFormat('yyyy').parse(car.year ?? 'yyyy'),
                               onChanged: (DateTime value) {
                                 Navigator.pop(context);
                                 yearController.text = DateFormat('yyyy').format(value);
@@ -118,7 +119,6 @@ class _EditPageState extends State<EditPage> {
                     ..color = colorController.text
                     ..totalMiles = milesController.text
                     ..year = yearController.text;
-
                   widget.isar.writeTxn(() async {
                     await widget.isar.cars.put(car);
                   });
@@ -149,7 +149,8 @@ class _EditPageState extends State<EditPage> {
                           child: Text('DELETE', style: TextStyle(color: Colors.red)),
                           onTap: () async {
                             await widget.isar.writeTxn(() async {
-                              return widget.isar.cars.delete(car.id);
+                              await widget.isar.cars.delete(car.id);
+                              await widget.isar.fuelings..filter().carIDEqualTo(car.id).deleteAll();
                             });
                             Navigator.pushAndRemoveUntil( context,
                               MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)),
