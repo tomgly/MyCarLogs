@@ -4,27 +4,25 @@ import 'package:intl/intl.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 
-class FuelingInputPage extends StatefulWidget {
+class MaintenanceInputPage extends StatefulWidget {
   final Isar isar;
   final Car car;
 
-  const FuelingInputPage({required this.isar, required this.car});
+  const MaintenanceInputPage({required this.isar, required this.car});
 
   @override
-  _FuelingInputPageState createState() => _FuelingInputPageState();
+  _MaintenanceInputPageState createState() => _MaintenanceInputPageState();
 }
 
-class _FuelingInputPageState extends State<FuelingInputPage> {
-  final fuelController = TextEditingController();
+class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
+  final descriptionController= TextEditingController();
   final costController = TextEditingController();
-  final milesController = TextEditingController();
   final dateController = TextEditingController();
 
   @override
   void dispose() {
-    fuelController.dispose();
+    descriptionController.dispose();
     costController.dispose();
-    milesController.dispose();
     dateController.dispose();
     super.dispose();
   }
@@ -33,19 +31,18 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Add Fueling', style: TextStyle(color: Colors.black, fontSize: 25)),
-          backgroundColor: Colors.green
-      ),
+          title: Text('Add Maintenance', style: TextStyle(color: Colors.black, fontSize: 25)),
+          backgroundColor: Colors.green      ),
       body: Padding(
         padding: EdgeInsets.all(64),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: fuelController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+              controller: descriptionController,
+              keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Fuel Amount',
+                  labelText: 'Description',
                   border: OutlineInputBorder()
               ),
             ),
@@ -55,15 +52,6 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
                   labelText: 'Cost',
-                  border: OutlineInputBorder()
-              ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: milesController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  labelText: 'Total Miles',
                   border: OutlineInputBorder()
               ),
             ),
@@ -96,14 +84,13 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final fueling = Fueling()
+                  final mainte = Maintenance()
                     ..carID = widget.car.id
-                    ..fuel = fuelController.text
+                    ..desc= descriptionController.text
                     ..cost = costController.text
-                    ..inputMiles = milesController.text
                     ..date = dateController.text;
                   await widget.isar.writeTxn(() async {
-                    await widget.isar.fuelings.put(fueling);
+                    await widget.isar.maintenances.put(mainte);
                   });
                   Navigator.of(context).pop();
                 },

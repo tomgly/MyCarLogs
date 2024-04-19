@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
 import 'collections/car.dart';
-import 'collections/fueling.dart';
+import 'collections/input.dart';
 import 'main.dart';
 
 class EditPage extends StatefulWidget {
@@ -151,6 +151,8 @@ class _EditPageState extends State<EditPage> {
                             await widget.isar.writeTxn(() async {
                               await widget.isar.cars.delete(car.id);
                               await widget.isar.fuelings..filter().carIDEqualTo(car.id).deleteAll();
+                              await widget.isar.maintenances..filter().carIDEqualTo(car.id).deleteAll();
+                              await widget.isar.repairs..filter().carIDEqualTo(car.id).deleteAll();
                             });
                             Navigator.pushAndRemoveUntil( context,
                               MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)),
