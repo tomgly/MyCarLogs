@@ -36,7 +36,6 @@ dependencies:
   isar: *isar_version
   isar_flutter_libs: *isar_version
   path_provider: ^2.1.2
-  shared_preferences: ^2.1.0
   flutter_slidable: ^3.0.0
   google_fonts: ^6.2.1
 
