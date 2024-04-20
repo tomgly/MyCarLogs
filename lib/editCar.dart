@@ -39,6 +39,7 @@ class _EditPageState extends State<EditPage> {
         title: Text('Edit Your Car'),
         backgroundColor: Colors.green,
       ),
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
         child: Column(

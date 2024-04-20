@@ -25,6 +25,7 @@ class _AddCarPageState extends State<AddCarPage> {
         title: Text('Add Your Car', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green,
       ),
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
         child: Column(

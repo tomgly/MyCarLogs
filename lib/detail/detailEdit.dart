@@ -107,6 +107,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
         title: Text('Edit ' + word),
         backgroundColor: Colors.green,
       ),
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
         child: Column(

@@ -34,6 +34,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
         title: Text('Add Repair', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green
       ),
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: EdgeInsets.all(64),
         child: Column(
@@ -50,7 +51,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
             SizedBox(height: 20),
             TextField(
               controller: costController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
                 labelText: 'Cost',
                 border: OutlineInputBorder()

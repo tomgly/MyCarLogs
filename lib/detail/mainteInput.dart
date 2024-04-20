@@ -32,7 +32,9 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Maintenance', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green      ),
+        backgroundColor: Colors.green
+      ),
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: EdgeInsets.all(64),
         child: Column(
@@ -49,7 +51,7 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
             SizedBox(height: 20),
             TextField(
               controller: costController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
                 labelText: 'Cost',
                 border: OutlineInputBorder()

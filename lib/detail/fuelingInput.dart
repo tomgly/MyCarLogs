@@ -76,6 +76,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
         title: Text('Add Fueling', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green
       ),
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: EdgeInsets.all(64),
         child: Column(
@@ -83,7 +84,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
           children: [
             TextField(
               controller: fuelController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
                 labelText: 'Fuel Amount',
                 border: OutlineInputBorder()
@@ -92,7 +93,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
             SizedBox(height: 20),
             TextField(
               controller: costController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
                 labelText: 'Cost',
                 border: OutlineInputBorder()
