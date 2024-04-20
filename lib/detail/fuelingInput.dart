@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'collections/car.dart';
-import 'collections/input.dart';
+import '../collections/car.dart';
+import '../collections/input.dart';
 
-class MaintenanceInputPage extends StatefulWidget {
+class FuelingInputPage extends StatefulWidget {
   final Isar isar;
   final Car car;
 
-  const MaintenanceInputPage({required this.isar, required this.car});
+  const FuelingInputPage({required this.isar, required this.car});
 
   @override
-  _MaintenanceInputPageState createState() => _MaintenanceInputPageState();
+  _FuelingInputPageState createState() => _FuelingInputPageState();
 }
 
-class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
-  final descriptionController= TextEditingController();
+class _FuelingInputPageState extends State<FuelingInputPage> {
+  final fuelController = TextEditingController();
   final costController = TextEditingController();
+  final milesController = TextEditingController();
   final dateController = TextEditingController();
 
   @override
   void dispose() {
-    descriptionController.dispose();
+    fuelController.dispose();
     costController.dispose();
+    milesController.dispose();
     dateController.dispose();
     super.dispose();
   }
@@ -31,19 +33,20 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Add Maintenance', style: TextStyle(color: Colors.black, fontSize: 25)),
-          backgroundColor: Colors.green      ),
+        title: Text('Add Fueling', style: TextStyle(color: Colors.black, fontSize: 25)),
+        backgroundColor: Colors.green
+      ),
       body: Padding(
         padding: EdgeInsets.all(64),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: descriptionController,
-              keyboardType: TextInputType.name,
+              controller: fuelController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder()
+                labelText: 'Fuel Amount',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 20),
@@ -51,8 +54,17 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
               controller: costController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                  labelText: 'Cost',
-                  border: OutlineInputBorder()
+                labelText: 'Cost',
+                border: OutlineInputBorder()
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: milesController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Total Miles',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 20),
@@ -84,13 +96,14 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final mainte = Maintenance()
+                  final fueling = Fueling()
                     ..carID = widget.car.id
-                    ..desc= descriptionController.text
+                    ..fuel = fuelController.text
                     ..cost = costController.text
+                    ..inputMiles = milesController.text
                     ..date = dateController.text;
                   await widget.isar.writeTxn(() async {
-                    await widget.isar.maintenances.put(mainte);
+                    await widget.isar.fuelings.put(fueling);
                   });
                   Navigator.of(context).pop();
                 },

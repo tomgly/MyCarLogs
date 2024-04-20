@@ -42,7 +42,7 @@ class _ListPageState extends State<ListPage> {
             onPressed: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return SettingPage();
+                  return SettingPage(isar: widget.isar);
                 }),
               );
             },
@@ -52,31 +52,32 @@ class _ListPageState extends State<ListPage> {
       ),
       body: Column(
         children: [ Expanded(
-          child: Card(child: ListView.separated(
-            physics: AlwaysScrollableScrollPhysics(),
-            itemCount: cars.length,
-            padding: const EdgeInsets.all(15),
-            itemBuilder: (BuildContext context, int index) {
-              final car = cars[index];
-              return ListTile(
-                title: Text(car.name ?? 'No Name', style: TextStyle(color: Colors.black)),
-                subtitle: Text('Color: ' + (car.color ?? 'No Color') + ', Year: ' + (car.year ?? 'No Year')),
-                tileColor: Color(0xffddffdd),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) {
-                      return DetailPage(isar: widget.isar, car: car);
-                    }),
-                  );
-                },
-              );
-            },
-            separatorBuilder: (BuildContext context,
-                int index) => const Divider(),
-          ))
+          child: Card(
+            child: ListView.separated(
+              physics: AlwaysScrollableScrollPhysics(),
+              itemCount: cars.length,
+              padding: const EdgeInsets.all(15),
+              separatorBuilder: (BuildContext context, int index) => const Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                final car = cars[index];
+                return ListTile(
+                  title: Text(car.name ?? 'No Name', style: TextStyle(color: Colors.black)),
+                  subtitle: Text('Color: ' + (car.color ?? 'No Color') + ', Year: ' + (car.year ?? 'No Year')),
+                  tileColor: Color(0xffddffdd),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                  ),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) {
+                        return DetailPage(isar: widget.isar, car: car);
+                      }),
+                    );
+                  },
+                );
+              },
+            )
+          )
         )]
       ),
       floatingActionButton: FloatingActionButton(

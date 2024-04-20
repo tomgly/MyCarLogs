@@ -32,6 +32,14 @@ class _EditPageState extends State<EditPage> {
     yearController = TextEditingController(text: car.year ?? 'No Year');
   }
 
+  selectedDate() {
+    if (car.year == '' || car.year == null) {
+      return DateTime.now();
+    } else {
+      return DateFormat('yyyy').parse(car.year!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,8 +57,8 @@ class _EditPageState extends State<EditPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Car Name',
-                  border: OutlineInputBorder()
+                labelText: 'Car Name',
+                border: OutlineInputBorder()
               ),
             ),
             const SizedBox(height: 8),
@@ -58,8 +66,8 @@ class _EditPageState extends State<EditPage> {
               controller: colorController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Body Color',
-                  border: OutlineInputBorder()
+                labelText: 'Body Color',
+                border: OutlineInputBorder()
               ),
             ),
             const SizedBox(height: 8),
@@ -67,8 +75,8 @@ class _EditPageState extends State<EditPage> {
               controller: milesController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                  labelText: 'Total Miles',
-                  border: OutlineInputBorder()
+                labelText: 'Total Miles',
+                border: OutlineInputBorder()
               ),
             ),
             const SizedBox(height: 8),
@@ -94,7 +102,7 @@ class _EditPageState extends State<EditPage> {
                               firstDate: DateTime(1980),
                               lastDate: DateTime(2024),
                               //initialDate: DateTime.now(),
-                              selectedDate: DateFormat('yyyy').parse(car.year ?? 'yyyy'),
+                              selectedDate: selectedDate(),
                               onChanged: (DateTime value) {
                                 Navigator.pop(context);
                                 yearController.text = DateFormat('yyyy').format(value);
@@ -172,7 +180,8 @@ class _EditPageState extends State<EditPage> {
                 },
                 child: Text('Delete This Car', style: TextStyle(color: Colors.red),
                 ),
-              ))
+              )
+            )
           ],
         ),
       ),

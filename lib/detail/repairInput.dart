@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'collections/car.dart';
-import 'collections/input.dart';
+import '../collections/car.dart';
+import '../collections/input.dart';
 
 class RepairInputPage extends StatefulWidget {
   final Isar isar;
@@ -31,8 +31,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Add Repair', style: TextStyle(color: Colors.black, fontSize: 25)),
-          backgroundColor: Colors.green
+        title: Text('Add Repair', style: TextStyle(color: Colors.black, fontSize: 25)),
+        backgroundColor: Colors.green
       ),
       body: Padding(
         padding: EdgeInsets.all(64),
@@ -43,8 +43,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
               controller: repairController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Repair',
-                  border: OutlineInputBorder()
+                labelText: 'Repair',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 20),
@@ -52,8 +52,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
               controller: costController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                  labelText: 'Cost',
-                  border: OutlineInputBorder()
+                labelText: 'Cost',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 20),

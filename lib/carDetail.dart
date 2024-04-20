@@ -3,9 +3,10 @@ import 'package:isar/isar.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'editCar.dart';
-import 'fuelingInput.dart';
-import 'mainteInput.dart';
-import 'repairInput.dart';
+import 'detail/fuelingInput.dart';
+import 'detail/mainteInput.dart';
+import 'detail/repairInput.dart';
+import 'detail/detailList.dart';
 
 class DetailPage extends StatefulWidget {
   final Isar isar;
@@ -34,6 +35,7 @@ class _DetailPageState extends State<DetailPage> {
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final repairData = await widget.isar.repairs.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
+
     setState(() {
       car = carData as Car;
       fuelings = fuelingData.cast<Fueling>();
@@ -64,88 +66,113 @@ class _DetailPageState extends State<DetailPage> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Car Information
-            Text(
-              'Name: ' + (car.name ?? 'No Name'),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Color: ' + (car.color ?? 'NO Color'),
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Total Miles: ' + (car.totalMiles ?? 'No Total Miles'),
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Year: ' + (car.year ?? 'No Year'),
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          // Car Information
+          Text(
+            'Name: ' + (car.name ?? 'No Name'),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Color: ' + (car.color ?? 'NO Color'),
+            style: TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Total Miles: ' + (car.totalMiles ?? 'No Total Miles'),
+            style: TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Year: ' + (car.year ?? 'No Year'),
+            style: TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 15),
 
-            // Fueling Logs
-            Text(
-              'Fueling Logs (' + fuelings.length.toString() + '):',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ListView.builder(
-                itemCount: count(fuelings.length),
-                padding: const EdgeInsets.all(15),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  final fueling = fuelings[index];
-                  return ListTile(
-                      title: Text('Fuel Amount: ' + (fueling.fuel ?? 'No Fuel') + 'gal, Cost: \$' + (fueling.cost ?? 'No Cost'),
-                          style: TextStyle(color: Colors.black)),
-                      subtitle: Text('Date: ' + (fueling.date ?? 'MM/dd/yyyy')),
-                      tileColor: Color(0xffffdad3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
-                      )
-                  );
-                }
-            ),
-            ElevatedButton(
-                onPressed: () async {
+          // Fueling Logs
+          Text(
+            'Fueling Logs (' + fuelings.length.toString() + '):',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ListView.builder(
+            itemCount: count(fuelings.length),
+            padding: const EdgeInsets.all(15),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              final fueling = fuelings[index];
+              return ListTile(
+                title: Text('Fuel Amount: ' + (fueling.fuel ?? 'No Fuel') + 'gal, Cost: \$' + (fueling.cost ?? 'No Cost'),
+                  style: TextStyle(color: Colors.black)),
+                subtitle: Text('Date: ' + (fueling.date ?? 'MM/dd/yyyy')),
+                tileColor: Color(0xffffdad3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                ),
+                onTap: () async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => FuelingInputPage(isar: widget.isar, car: car),
+                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 0),
                     ),
                   );
                 },
-              child: Text('Add Fueling'),
+              );
+            }
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => FuelingInputPage(isar: widget.isar, car: car),
+                  ),
+                );
+              },
+              child: Text('Add Fueling', style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                side: BorderSide(color: Colors.black),
+                backgroundColor: Color(0xffffdad3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+          ),
+          const SizedBox(height: 10),
 
-            // Maintenance Logs
-            Text(
-              'Maintenance Logs (' + maintes.length.toString() + '):',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ListView.builder(
-                itemCount: count(maintes.length),
-                padding: const EdgeInsets.all(15),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  final mainte = maintes[index];
-                  return ListTile(
-                      title: Text('Description: ' + (mainte.desc ?? 'No Desc') + ', Cost: \$' + (mainte.cost ?? 'No Cost'),
-                          style: TextStyle(color: Colors.black)),
-                      subtitle: Text('Date: ' + (mainte.date ?? 'MM/dd/yyyy')),
-                      tileColor: Color(0xffd3def1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
-                      )
+          // Maintenance Logs
+          Text('Maintenance Logs (' + maintes.length.toString() + '):',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ListView.builder(
+            itemCount: count(maintes.length),
+            padding: const EdgeInsets.all(15),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              final mainte = maintes[index];
+              return ListTile(
+                title: Text('Description: ' + (mainte.desc ?? 'No Desc') + ', Cost: \$' + (mainte.cost ?? 'No Cost'),
+                  style: TextStyle(color: Colors.black)),
+                subtitle: Text('Date: ' + (mainte.date ?? 'MM/dd/yyyy')),
+                tileColor: Color(0xffd3def1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                ),
+                onTap: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 1),
+                    ),
                   );
-                }
-            ),
-            ElevatedButton(
+                },
+              );
+            }
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute(
@@ -153,33 +180,50 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 );
               },
-              child: Text('Add Maintenance'),
+              child: Text('Add Maintenance', style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                side: BorderSide(color: Colors.black),
+                backgroundColor: Color(0xffd3def1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+          ),
+          const SizedBox(height: 10),
 
-            // Repair Logs
-            Text(
-              'Repair Logs (' + repairs.length.toString() + '):',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ListView.builder(
-                itemCount: count(repairs.length),
-                padding: const EdgeInsets.all(15),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  final repair = repairs[index];
-                  return ListTile(
-                      title: Text('Repair: ' + (repair.repair ?? 'No Repair') + ', Cost: \$' + (repair.cost ?? 'No Cost'),
-                          style: TextStyle(color: Colors.black)),
-                      subtitle: Text('Date: ' + (repair.date ?? 'MM/dd/yyyy')),
-                      tileColor: Color(0xfffff1ab),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
-                      )
+          // Repair Logs
+          Text('Repair Logs (' + repairs.length.toString() + '):',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ListView.builder(
+            itemCount: count(repairs.length),
+            padding: const EdgeInsets.all(15),
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              final repair = repairs[index];
+              return ListTile(
+                title: Text('Repair: ' + (repair.repair ?? 'No Repair') + ', Cost: \$' + (repair.cost ?? 'No Cost'),
+                  style: TextStyle(color: Colors.black)),
+                subtitle: Text('Date: ' + (repair.date ?? 'MM/dd/yyyy')),
+                tileColor: Color(0xfffff1ab),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                ),
+                onTap: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 2),
+                    ),
                   );
-                }
-            ),
-            ElevatedButton(
+                },
+              );
+            }
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
               onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute(
@@ -187,20 +231,27 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 );
               },
-              child: Text('Add Repair'),
+              child: Text('Add Repair', style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(
+                side: BorderSide(color: Colors.black),
+                backgroundColor: Color(0xfffff1ab),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
-          ],
-        ),
+          ),
+          const SizedBox(height: 10),
+        ]),
       ),
     );
   }
 
   count(int num) {
-    if (num < 3) {
+    if (num < 2) {
       return num;
-    } else if (num >= 3){
-      return 3;
+    } else if (num >= 2){
+      return 2;
     }
   }
 }

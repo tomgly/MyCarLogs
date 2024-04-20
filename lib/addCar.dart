@@ -35,8 +35,8 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Car Name',
-                  border: OutlineInputBorder()
+                labelText: 'Car Name',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 8),
@@ -44,8 +44,8 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: colorController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                  labelText: 'Body Color',
-                  border: OutlineInputBorder()
+                labelText: 'Body Color',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 8),
@@ -53,8 +53,8 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: milesController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                  labelText: 'Total Miles',
-                  border: OutlineInputBorder()
+                labelText: 'Total Miles',
+                border: OutlineInputBorder()
               ),
             ),
             SizedBox(height: 8),
