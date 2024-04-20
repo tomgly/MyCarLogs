@@ -26,18 +26,10 @@ class _EditPageState extends State<EditPage> {
   void initState() {
     super.initState();
     car = widget.car;
-    nameController = TextEditingController(text: car.name ?? 'NO Name');
-    colorController = TextEditingController(text: car.color ?? 'No Color');
-    milesController = TextEditingController(text: car.totalMiles ?? 'No Miles');
-    yearController = TextEditingController(text: car.year ?? 'No Year');
-  }
-
-  selectedDate() {
-    if (car.year == '' || car.year == null) {
-      return DateTime.now();
-    } else {
-      return DateFormat('yyyy').parse(car.year!);
-    }
+    nameController = TextEditingController(text: car.name);
+    colorController = TextEditingController(text: car.color);
+    milesController = TextEditingController(text: car.totalMiles);
+    yearController = TextEditingController(text: car.year);
   }
 
   @override
@@ -102,7 +94,7 @@ class _EditPageState extends State<EditPage> {
                               firstDate: DateTime(1980),
                               lastDate: DateTime(2024),
                               //initialDate: DateTime.now(),
-                              selectedDate: selectedDate(),
+                              selectedDate: DateFormat('yyyy').parse(car.year),
                               onChanged: (DateTime value) {
                                 Navigator.pop(context);
                                 yearController.text = DateFormat('yyyy').format(value);
@@ -122,15 +114,21 @@ class _EditPageState extends State<EditPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  car
-                    ..name = nameController.text
-                    ..color = colorController.text
-                    ..totalMiles = milesController.text
-                    ..year = yearController.text;
-                  widget.isar.writeTxn(() async {
-                    await widget.isar.cars.put(car);
-                  });
-                  Navigator.of(context).pop();
+                  if (nameController.text == '' || colorController == '' || milesController == '' || yearController == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Error, You need to fill all'))
+                    );
+                  } else {
+                    car
+                      ..name = nameController.text
+                      ..color = colorController.text
+                      ..totalMiles = milesController.text
+                      ..year = yearController.text;
+                    widget.isar.writeTxn(() async {
+                      await widget.isar.cars.put(car);
+                    });
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text('Submit', style: TextStyle(color: Colors.white)),
               ),

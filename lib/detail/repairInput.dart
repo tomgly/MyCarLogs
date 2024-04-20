@@ -85,15 +85,21 @@ class _RepairInputPageState extends State<RepairInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final repair = Repair()
-                    ..carID = widget.car.id
-                    ..repair = repairController.text
-                    ..cost = costController.text
-                    ..date = dateController.text;
-                  await widget.isar.writeTxn(() async {
-                    await widget.isar.repairs.put(repair);
-                  });
-                  Navigator.of(context).pop();
+                  if (repairController.text == '' || costController == '' ||dateController == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Error, You need to fill all'))
+                    );
+                  } else {
+                    final repair = Repair()
+                      ..carID = widget.car.id
+                      ..repair = repairController.text
+                      ..cost = costController.text
+                      ..date = dateController.text;
+                    await widget.isar.writeTxn(() async {
+                      await widget.isar.repairs.put(repair);
+                    });
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text('Submit', style: TextStyle(color: Colors.white)),
               ),

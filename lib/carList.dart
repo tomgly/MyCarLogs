@@ -53,27 +53,30 @@ class _ListPageState extends State<ListPage> {
       body: Column(
         children: [ Expanded(
           child: Card(
-            child: ListView.separated(
+            child: ListView.builder(
               physics: AlwaysScrollableScrollPhysics(),
               itemCount: cars.length,
               padding: const EdgeInsets.all(15),
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
               itemBuilder: (BuildContext context, int index) {
                 final car = cars[index];
-                return ListTile(
-                  title: Text(car.name ?? 'No Name', style: TextStyle(color: Colors.black)),
-                  subtitle: Text('Color: ' + (car.color ?? 'No Color') + ', Year: ' + (car.year ?? 'No Year')),
-                  tileColor: Color(0xffddffdd),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                  ),
-                  onTap: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) {
-                        return DetailPage(isar: widget.isar, car: car);
-                      }),
-                    );
-                  },
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ListTile(
+                    title: Text(car.name, style: TextStyle(color: Colors.black)),
+                    subtitle: Text('Color: ' + (car.color) + ', Year: ' + (car.year)),
+                    tileColor: Color(0xffddffdd),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
+                      side: BorderSide(color: Colors.black),
+                    ),
+                    onTap: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) {
+                          return DetailPage(isar: widget.isar, car: car);
+                        }),
+                      );
+                    },
+                  )
                 );
               },
             )
@@ -89,7 +92,11 @@ class _ListPageState extends State<ListPage> {
           );
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xffddffdd),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          side: BorderSide(color: Colors.black),
+        ),
       ),
     );
   }

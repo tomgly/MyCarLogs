@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'editCar.dart';
+import 'detail/detailList.dart';
 import 'detail/fuelingInput.dart';
 import 'detail/mainteInput.dart';
 import 'detail/repairInput.dart';
-import 'detail/detailList.dart';
 
 class DetailPage extends StatefulWidget {
   final Isar isar;
@@ -69,22 +70,22 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Car Information
           Text(
-            'Name: ' + (car.name ?? 'No Name'),
+            'Name: ' + (car.name),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'Color: ' + (car.color ?? 'NO Color'),
+            'Color: ' + (car.color),
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 8),
           Text(
-            'Total Miles: ' + (car.totalMiles ?? 'No Total Miles'),
+            'Total Miles: ' + (NumberFormat('#,###').format(int.parse(car.totalMiles))) + ' mi',
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 8),
           Text(
-            'Year: ' + (car.year ?? 'No Year'),
+            'Year: ' + (car.year),
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 15),
@@ -101,21 +102,27 @@ class _DetailPageState extends State<DetailPage> {
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               final fueling = fuelings[index];
-              return ListTile(
-                title: Text('Fuel Amount: ' + (fueling.fuel ?? 'No Fuel') + 'gal, Cost: \$' + (fueling.cost ?? 'No Cost'),
-                  style: TextStyle(color: Colors.black)),
-                subtitle: Text('Date: ' + (fueling.date ?? 'MM/dd/yyyy')),
-                tileColor: Color(0xffffdad3),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 0),
-                    ),
-                  );
-                },
+              return Padding(
+                padding: const EdgeInsets.all(5),
+                child: ListTile(
+                  title: Text('Fuel Amount: ' + (fueling.fuel) + 'gal, Cost: \$' + (fueling.cost),
+                    style: TextStyle(color: Colors.black)),
+                  subtitle: Text('Date: ' + (fueling.date)),
+                  trailing: Text((fueling.aveFuel.toStringAsFixed(2)) + ' mpg',
+                  style: TextStyle(fontSize: 15)),
+                  tileColor: Color(0xffffdad3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    side: BorderSide(color: Colors.black),
+                  ),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 0),
+                      ),
+                    );
+                  },
+                )
               );
             }
           ),
@@ -152,21 +159,25 @@ class _DetailPageState extends State<DetailPage> {
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               final mainte = maintes[index];
-              return ListTile(
-                title: Text('Description: ' + (mainte.desc ?? 'No Desc') + ', Cost: \$' + (mainte.cost ?? 'No Cost'),
-                  style: TextStyle(color: Colors.black)),
-                subtitle: Text('Date: ' + (mainte.date ?? 'MM/dd/yyyy')),
-                tileColor: Color(0xffd3def1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 1),
-                    ),
-                  );
-                },
+              return Padding(
+                padding: const EdgeInsets.all(5),
+                child: ListTile(
+                  title: Text('Description: ' + (mainte.desc) + ', Cost: \$' + (mainte.cost),
+                      style: TextStyle(color: Colors.black)),
+                  subtitle: Text('Date: ' + (mainte.date)),
+                  tileColor: Color(0xffd3def1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    side: BorderSide(color: Colors.black),
+                  ),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 1),
+                      ),
+                    );
+                  },
+                )
               );
             }
           ),
@@ -203,21 +214,25 @@ class _DetailPageState extends State<DetailPage> {
             physics: NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               final repair = repairs[index];
-              return ListTile(
-                title: Text('Repair: ' + (repair.repair ?? 'No Repair') + ', Cost: \$' + (repair.cost ?? 'No Cost'),
-                  style: TextStyle(color: Colors.black)),
-                subtitle: Text('Date: ' + (repair.date ?? 'MM/dd/yyyy')),
-                tileColor: Color(0xfffff1ab),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                ),
-                onTap: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 2),
-                    ),
-                  );
-                },
+              return Padding(
+                padding: const EdgeInsets.all(5),
+                child: ListTile(
+                  title: Text('Repair: ' + (repair.repair) + ', Cost: \$' + (repair.cost),
+                    style: TextStyle(color: Colors.black)),
+                  subtitle: Text('Date: ' + (repair.date)),
+                  tileColor: Color(0xfffff1ab),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    side: BorderSide(color: Colors.black),
+                  ),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DetailListPage(isar: widget.isar, car: car, type: 2),
+                      ),
+                    );
+                  },
+                )
               );
             }
           ),
@@ -253,22 +268,5 @@ class _DetailPageState extends State<DetailPage> {
     } else if (num >= 2){
       return 2;
     }
-  }
-}
-
-class ErrorDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Error'),
-      actions: <Widget>[
-        GestureDetector(
-          child: Text('OK'),
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-        )
-      ],
-    );
   }
 }

@@ -100,15 +100,22 @@ class _AddCarPageState extends State<AddCarPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final car = Car()
-                    ..name = nameController.text
-                    ..color = colorController.text
-                    ..totalMiles = milesController.text
-                    ..year = yearController.text;
-                  await widget.isar.writeTxn(() async {
-                    await widget.isar.cars.put(car);
-                  });
-                  Navigator.of(context).pop();
+                  if (nameController.text == '' || colorController == '' || milesController == '' || yearController == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Error, You need to fill all'))
+                    );
+                  } else {
+                    final car = Car()
+                      ..name = nameController.text
+                      ..color = colorController.text
+                      ..firstMiles = milesController.text
+                      ..totalMiles = milesController.text
+                      ..year = yearController.text;
+                    await widget.isar.writeTxn(() async {
+                      await widget.isar.cars.put(car);
+                    });
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text('Submit', style: TextStyle(color: Colors.white)),
               ),

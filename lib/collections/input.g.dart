@@ -17,28 +17,33 @@ const FuelingSchema = CollectionSchema(
   name: r'Fueling',
   id: -214611607443245656,
   properties: {
-    r'carID': PropertySchema(
+    r'aveFuel': PropertySchema(
       id: 0,
+      name: r'aveFuel',
+      type: IsarType.double,
+    ),
+    r'carID': PropertySchema(
+      id: 1,
       name: r'carID',
       type: IsarType.long,
     ),
     r'cost': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'cost',
       type: IsarType.string,
     ),
     r'date': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'date',
       type: IsarType.string,
     ),
     r'fuel': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'fuel',
       type: IsarType.string,
     ),
     r'inputMiles': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'inputMiles',
       type: IsarType.string,
     )
@@ -77,30 +82,10 @@ int _fuelingEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.cost;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.date;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.fuel;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.inputMiles;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.cost.length * 3;
+  bytesCount += 3 + object.date.length * 3;
+  bytesCount += 3 + object.fuel.length * 3;
+  bytesCount += 3 + object.inputMiles.length * 3;
   return bytesCount;
 }
 
@@ -110,11 +95,12 @@ void _fuelingSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.carID);
-  writer.writeString(offsets[1], object.cost);
-  writer.writeString(offsets[2], object.date);
-  writer.writeString(offsets[3], object.fuel);
-  writer.writeString(offsets[4], object.inputMiles);
+  writer.writeDouble(offsets[0], object.aveFuel);
+  writer.writeLong(offsets[1], object.carID);
+  writer.writeString(offsets[2], object.cost);
+  writer.writeString(offsets[3], object.date);
+  writer.writeString(offsets[4], object.fuel);
+  writer.writeString(offsets[5], object.inputMiles);
 }
 
 Fueling _fuelingDeserialize(
@@ -124,12 +110,13 @@ Fueling _fuelingDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Fueling();
-  object.carID = reader.readLong(offsets[0]);
-  object.cost = reader.readStringOrNull(offsets[1]);
-  object.date = reader.readStringOrNull(offsets[2]);
-  object.fuel = reader.readStringOrNull(offsets[3]);
+  object.aveFuel = reader.readDouble(offsets[0]);
+  object.carID = reader.readLong(offsets[1]);
+  object.cost = reader.readString(offsets[2]);
+  object.date = reader.readString(offsets[3]);
+  object.fuel = reader.readString(offsets[4]);
   object.id = id;
-  object.inputMiles = reader.readStringOrNull(offsets[4]);
+  object.inputMiles = reader.readString(offsets[5]);
   return object;
 }
 
@@ -141,15 +128,17 @@ P _fuelingDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -241,27 +230,7 @@ extension FuelingQueryWhere on QueryBuilder<Fueling, Fueling, QWhereClause> {
     });
   }
 
-  QueryBuilder<Fueling, Fueling, QAfterWhereClause> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'date',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterWhereClause> dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterWhereClause> dateEqualTo(String? date) {
+  QueryBuilder<Fueling, Fueling, QAfterWhereClause> dateEqualTo(String date) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'date',
@@ -271,7 +240,7 @@ extension FuelingQueryWhere on QueryBuilder<Fueling, Fueling, QWhereClause> {
   }
 
   QueryBuilder<Fueling, Fueling, QAfterWhereClause> dateNotEqualTo(
-      String? date) {
+      String date) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -308,6 +277,68 @@ extension FuelingQueryWhere on QueryBuilder<Fueling, Fueling, QWhereClause> {
 
 extension FuelingQueryFilter
     on QueryBuilder<Fueling, Fueling, QFilterCondition> {
+  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> aveFuelEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'aveFuel',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> aveFuelGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'aveFuel',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> aveFuelLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'aveFuel',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> aveFuelBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'aveFuel',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> carIDEqualTo(
       int value) {
     return QueryBuilder.apply(this, (query) {
@@ -361,24 +392,8 @@ extension FuelingQueryFilter
     });
   }
 
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cost',
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cost',
-      ));
-    });
-  }
-
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -391,7 +406,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -406,7 +421,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -421,8 +436,8 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> costBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -507,24 +522,8 @@ extension FuelingQueryFilter
     });
   }
 
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'date',
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'date',
-      ));
-    });
-  }
-
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -537,7 +536,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -552,7 +551,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -567,8 +566,8 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> dateBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -653,24 +652,8 @@ extension FuelingQueryFilter
     });
   }
 
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'fuel',
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'fuel',
-      ));
-    });
-  }
-
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -683,7 +666,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -698,7 +681,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -713,8 +696,8 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> fuelBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -851,24 +834,8 @@ extension FuelingQueryFilter
     });
   }
 
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'inputMiles',
-      ));
-    });
-  }
-
-  QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'inputMiles',
-      ));
-    });
-  }
-
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -881,7 +848,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -896,7 +863,7 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -911,8 +878,8 @@ extension FuelingQueryFilter
   }
 
   QueryBuilder<Fueling, Fueling, QAfterFilterCondition> inputMilesBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1005,6 +972,18 @@ extension FuelingQueryLinks
     on QueryBuilder<Fueling, Fueling, QFilterCondition> {}
 
 extension FuelingQuerySortBy on QueryBuilder<Fueling, Fueling, QSortBy> {
+  QueryBuilder<Fueling, Fueling, QAfterSortBy> sortByAveFuel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'aveFuel', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Fueling, Fueling, QAfterSortBy> sortByAveFuelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'aveFuel', Sort.desc);
+    });
+  }
+
   QueryBuilder<Fueling, Fueling, QAfterSortBy> sortByCarID() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'carID', Sort.asc);
@@ -1068,6 +1047,18 @@ extension FuelingQuerySortBy on QueryBuilder<Fueling, Fueling, QSortBy> {
 
 extension FuelingQuerySortThenBy
     on QueryBuilder<Fueling, Fueling, QSortThenBy> {
+  QueryBuilder<Fueling, Fueling, QAfterSortBy> thenByAveFuel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'aveFuel', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Fueling, Fueling, QAfterSortBy> thenByAveFuelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'aveFuel', Sort.desc);
+    });
+  }
+
   QueryBuilder<Fueling, Fueling, QAfterSortBy> thenByCarID() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'carID', Sort.asc);
@@ -1143,6 +1134,12 @@ extension FuelingQuerySortThenBy
 
 extension FuelingQueryWhereDistinct
     on QueryBuilder<Fueling, Fueling, QDistinct> {
+  QueryBuilder<Fueling, Fueling, QDistinct> distinctByAveFuel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'aveFuel');
+    });
+  }
+
   QueryBuilder<Fueling, Fueling, QDistinct> distinctByCarID() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'carID');
@@ -1186,31 +1183,37 @@ extension FuelingQueryProperty
     });
   }
 
+  QueryBuilder<Fueling, double, QQueryOperations> aveFuelProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'aveFuel');
+    });
+  }
+
   QueryBuilder<Fueling, int, QQueryOperations> carIDProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'carID');
     });
   }
 
-  QueryBuilder<Fueling, String?, QQueryOperations> costProperty() {
+  QueryBuilder<Fueling, String, QQueryOperations> costProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cost');
     });
   }
 
-  QueryBuilder<Fueling, String?, QQueryOperations> dateProperty() {
+  QueryBuilder<Fueling, String, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
   }
 
-  QueryBuilder<Fueling, String?, QQueryOperations> fuelProperty() {
+  QueryBuilder<Fueling, String, QQueryOperations> fuelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fuel');
     });
   }
 
-  QueryBuilder<Fueling, String?, QQueryOperations> inputMilesProperty() {
+  QueryBuilder<Fueling, String, QQueryOperations> inputMilesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'inputMiles');
     });
@@ -1283,24 +1286,9 @@ int _maintenanceEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.cost;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.date;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.desc;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.cost.length * 3;
+  bytesCount += 3 + object.date.length * 3;
+  bytesCount += 3 + object.desc.length * 3;
   return bytesCount;
 }
 
@@ -1324,9 +1312,9 @@ Maintenance _maintenanceDeserialize(
 ) {
   final object = Maintenance();
   object.carID = reader.readLong(offsets[0]);
-  object.cost = reader.readStringOrNull(offsets[1]);
-  object.date = reader.readStringOrNull(offsets[2]);
-  object.desc = reader.readStringOrNull(offsets[3]);
+  object.cost = reader.readString(offsets[1]);
+  object.date = reader.readString(offsets[2]);
+  object.desc = reader.readString(offsets[3]);
   object.id = id;
   return object;
 }
@@ -1341,11 +1329,11 @@ P _maintenanceDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1441,28 +1429,8 @@ extension MaintenanceQueryWhere
     });
   }
 
-  QueryBuilder<Maintenance, Maintenance, QAfterWhereClause> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'date',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<Maintenance, Maintenance, QAfterWhereClause> dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
   QueryBuilder<Maintenance, Maintenance, QAfterWhereClause> dateEqualTo(
-      String? date) {
+      String date) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'date',
@@ -1472,7 +1440,7 @@ extension MaintenanceQueryWhere
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterWhereClause> dateNotEqualTo(
-      String? date) {
+      String date) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -1563,25 +1531,8 @@ extension MaintenanceQueryFilter
     });
   }
 
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> costIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cost',
-      ));
-    });
-  }
-
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition>
-      costIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cost',
-      ));
-    });
-  }
-
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> costEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1594,7 +1545,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> costGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1609,7 +1560,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> costLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1624,8 +1575,8 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> costBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1711,25 +1662,8 @@ extension MaintenanceQueryFilter
     });
   }
 
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'date',
-      ));
-    });
-  }
-
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition>
-      dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'date',
-      ));
-    });
-  }
-
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> dateEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1742,7 +1676,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> dateGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1757,7 +1691,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> dateLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1772,8 +1706,8 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> dateBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1859,25 +1793,8 @@ extension MaintenanceQueryFilter
     });
   }
 
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> descIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'desc',
-      ));
-    });
-  }
-
-  QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition>
-      descIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'desc',
-      ));
-    });
-  }
-
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> descEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1890,7 +1807,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> descGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1905,7 +1822,7 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> descLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1920,8 +1837,8 @@ extension MaintenanceQueryFilter
   }
 
   QueryBuilder<Maintenance, Maintenance, QAfterFilterCondition> descBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -2225,19 +2142,19 @@ extension MaintenanceQueryProperty
     });
   }
 
-  QueryBuilder<Maintenance, String?, QQueryOperations> costProperty() {
+  QueryBuilder<Maintenance, String, QQueryOperations> costProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cost');
     });
   }
 
-  QueryBuilder<Maintenance, String?, QQueryOperations> dateProperty() {
+  QueryBuilder<Maintenance, String, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
   }
 
-  QueryBuilder<Maintenance, String?, QQueryOperations> descProperty() {
+  QueryBuilder<Maintenance, String, QQueryOperations> descProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'desc');
     });
@@ -2310,24 +2227,9 @@ int _repairEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.cost;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.date;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.repair;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.cost.length * 3;
+  bytesCount += 3 + object.date.length * 3;
+  bytesCount += 3 + object.repair.length * 3;
   return bytesCount;
 }
 
@@ -2351,10 +2253,10 @@ Repair _repairDeserialize(
 ) {
   final object = Repair();
   object.carID = reader.readLong(offsets[0]);
-  object.cost = reader.readStringOrNull(offsets[1]);
-  object.date = reader.readStringOrNull(offsets[2]);
+  object.cost = reader.readString(offsets[1]);
+  object.date = reader.readString(offsets[2]);
   object.id = id;
-  object.repair = reader.readStringOrNull(offsets[3]);
+  object.repair = reader.readString(offsets[3]);
   return object;
 }
 
@@ -2368,11 +2270,11 @@ P _repairDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2464,27 +2366,7 @@ extension RepairQueryWhere on QueryBuilder<Repair, Repair, QWhereClause> {
     });
   }
 
-  QueryBuilder<Repair, Repair, QAfterWhereClause> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'date',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<Repair, Repair, QAfterWhereClause> dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'date',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<Repair, Repair, QAfterWhereClause> dateEqualTo(String? date) {
+  QueryBuilder<Repair, Repair, QAfterWhereClause> dateEqualTo(String date) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'date',
@@ -2493,7 +2375,7 @@ extension RepairQueryWhere on QueryBuilder<Repair, Repair, QWhereClause> {
     });
   }
 
-  QueryBuilder<Repair, Repair, QAfterWhereClause> dateNotEqualTo(String? date) {
+  QueryBuilder<Repair, Repair, QAfterWhereClause> dateNotEqualTo(String date) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -2581,24 +2463,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> costIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cost',
-      ));
-    });
-  }
-
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> costIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cost',
-      ));
-    });
-  }
-
   QueryBuilder<Repair, Repair, QAfterFilterCondition> costEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2611,7 +2477,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> costGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2626,7 +2492,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> costLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2641,8 +2507,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> costBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -2726,24 +2592,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> dateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'date',
-      ));
-    });
-  }
-
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> dateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'date',
-      ));
-    });
-  }
-
   QueryBuilder<Repair, Repair, QAfterFilterCondition> dateEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2756,7 +2606,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> dateGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2771,7 +2621,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> dateLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2786,8 +2636,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> dateBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -2923,24 +2773,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> repairIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'repair',
-      ));
-    });
-  }
-
-  QueryBuilder<Repair, Repair, QAfterFilterCondition> repairIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'repair',
-      ));
-    });
-  }
-
   QueryBuilder<Repair, Repair, QAfterFilterCondition> repairEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -2953,7 +2787,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> repairGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2968,7 +2802,7 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> repairLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -2983,8 +2817,8 @@ extension RepairQueryFilter on QueryBuilder<Repair, Repair, QFilterCondition> {
   }
 
   QueryBuilder<Repair, Repair, QAfterFilterCondition> repairBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -3228,19 +3062,19 @@ extension RepairQueryProperty on QueryBuilder<Repair, Repair, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Repair, String?, QQueryOperations> costProperty() {
+  QueryBuilder<Repair, String, QQueryOperations> costProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cost');
     });
   }
 
-  QueryBuilder<Repair, String?, QQueryOperations> dateProperty() {
+  QueryBuilder<Repair, String, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
   }
 
-  QueryBuilder<Repair, String?, QQueryOperations> repairProperty() {
+  QueryBuilder<Repair, String, QQueryOperations> repairProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'repair');
     });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'detailEdit.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 
@@ -74,24 +75,24 @@ class _DetailListPageState extends State<DetailListPage> {
 
   tileTitle(int index) {
     if (widget.type == 0) {
-      return Text('Fuel: ' + (fuelings[index].fuel ?? 'No Fuel') + ', Cost: \$' + (fuelings[index].cost ?? 'No Cost'),
+      return Text('Fuel: ' + (fuelings[index].fuel) + ', Cost: \$' + (fuelings[index].cost),
           style: TextStyle(color: Colors.black));
     } else if (widget.type == 1) {
-      return Text('Description: ' + (maintes[index].desc ?? 'No Desc') + ', Cost: \$' + (maintes[index].cost ?? 'No Cost'),
+      return Text('Description: ' + (maintes[index].desc) + ', Cost: \$' + (maintes[index].cost),
           style: TextStyle(color: Colors.black));
     } else if (widget.type == 2) {
-      return Text('Repair: ' + (repairs[index].repair ?? 'No Repair') + ', Cost: \$' + (repairs[index].cost ?? 'No Cost'),
+      return Text('Repair: ' + (repairs[index].repair) + ', Cost: \$' + (repairs[index].cost),
           style: TextStyle(color: Colors.black));
     }
   }
 
   tileSubtitle(int index) {
     if (widget.type == 0) {
-      return Text('Date: ' + (fuelings[index].date ?? 'MM/dd/yyyy'));
+      return Text('Date: ' + (fuelings[index].date));
     } else if (widget.type == 1) {
-      return Text('Date: ' + (maintes[index].date ?? 'MM/dd/yyyy'));
+      return Text('Date: ' + (maintes[index].date));
     } else if (widget.type == 2) {
-      return Text('Date: ' + (repairs[index].date ?? 'MM/dd/yyyy'));
+      return Text('Date: ' + (repairs[index].date));
     }
   }
 
@@ -102,6 +103,26 @@ class _DetailListPageState extends State<DetailListPage> {
       return Color(0xffd3def1);
     } else if (widget.type == 2) {
       return Color(0xfffff1ab);
+    }
+  }
+
+  trailing(int index) {
+    if (widget.type == 0) {
+      return Text((fuelings[index].aveFuel.toStringAsFixed(2)) + ' mpg',
+          style: TextStyle(fontSize: 15),
+    );
+    } else {
+      return null;
+    }
+  }
+  
+  returnDetail(int index) {
+    if (widget.type == 0) {
+      return fuelings[index];
+    } else if (widget.type == 1) {
+      return maintes[index];
+    } else if (widget.type == 2) {
+      return repairs[index];
     }
   }
 
@@ -130,13 +151,11 @@ class _DetailListPageState extends State<DetailListPage> {
                   children: [
                     SlidableAction(
                       onPressed: (_) async {
-                        /*
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EditPage(isar: widget.isar, car: car),
+                            builder: (context) => DetailEditPage(isar: widget.isar, type: widget.type, detail: returnDetail(index)),
                           ),
                         );
-                         */
                       },
                       backgroundColor: Colors.grey,
                       foregroundColor: Colors.white,
@@ -147,7 +166,6 @@ class _DetailListPageState extends State<DetailListPage> {
                         await widget.isar.writeTxn(() async {
                           delete(index);
                         });
-                        //loadData();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Deleted'))
                         );
@@ -162,12 +180,13 @@ class _DetailListPageState extends State<DetailListPage> {
                   title: tileTitle(index),
                   subtitle: tileSubtitle(index),
                   tileColor: tileColor(),
+                  trailing: trailing(index),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
+                    side: BorderSide(color: Colors.black),
                   ),
                 )
-                );
-              },
+              );},
             )
           )
         )]

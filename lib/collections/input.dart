@@ -8,14 +8,16 @@ class Fueling {
 
   late int carID;
 
-  late String? fuel;
+  late String fuel;
 
-  late String? cost;
+  late String cost;
 
-  late String? inputMiles;
+  late String inputMiles;
+
+  late double aveFuel;
 
   @Index()
-  late String? date;
+  late String date;
 }
 
 @collection
@@ -24,12 +26,12 @@ class Maintenance {
 
   late int carID;
 
-  late String? desc;
+  late String desc;
 
-  late String? cost;
+  late String cost;
 
   @Index()
-  late String? date;
+  late String date;
 }
 
 @collection
@@ -38,10 +40,10 @@ class Repair {
 
   late int carID;
 
-  late String? repair;
+  late String repair;
 
-  late String? cost;
+  late String cost;
 
   @Index()
-  late String? date;
+  late String date;
 }

@@ -84,15 +84,21 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final mainte = Maintenance()
-                    ..carID = widget.car.id
-                    ..desc= descriptionController.text
-                    ..cost = costController.text
-                    ..date = dateController.text;
-                  await widget.isar.writeTxn(() async {
-                    await widget.isar.maintenances.put(mainte);
-                  });
-                  Navigator.of(context).pop();
+                  if (descriptionController.text == '' || costController == '' ||dateController == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Error, You need to fill all'))
+                    );
+                  } else {
+                    final mainte = Maintenance()
+                      ..carID = widget.car.id
+                      ..desc = descriptionController.text
+                      ..cost = costController.text
+                      ..date = dateController.text;
+                    await widget.isar.writeTxn(() async {
+                      await widget.isar.maintenances.put(mainte);
+                    });
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text('Submit', style: TextStyle(color: Colors.white)),
               ),

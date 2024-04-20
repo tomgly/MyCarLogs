@@ -22,18 +22,23 @@ const CarSchema = CollectionSchema(
       name: r'color',
       type: IsarType.string,
     ),
-    r'name': PropertySchema(
+    r'firstMiles': PropertySchema(
       id: 1,
+      name: r'firstMiles',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 2,
       name: r'name',
       type: IsarType.string,
     ),
     r'totalMiles': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'totalMiles',
       type: IsarType.string,
     ),
     r'year': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'year',
       type: IsarType.string,
     )
@@ -58,30 +63,11 @@ int _carEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  {
-    final value = object.color;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.name;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.totalMiles;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.year;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.color.length * 3;
+  bytesCount += 3 + object.firstMiles.length * 3;
+  bytesCount += 3 + object.name.length * 3;
+  bytesCount += 3 + object.totalMiles.length * 3;
+  bytesCount += 3 + object.year.length * 3;
   return bytesCount;
 }
 
@@ -92,9 +78,10 @@ void _carSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.color);
-  writer.writeString(offsets[1], object.name);
-  writer.writeString(offsets[2], object.totalMiles);
-  writer.writeString(offsets[3], object.year);
+  writer.writeString(offsets[1], object.firstMiles);
+  writer.writeString(offsets[2], object.name);
+  writer.writeString(offsets[3], object.totalMiles);
+  writer.writeString(offsets[4], object.year);
 }
 
 Car _carDeserialize(
@@ -104,11 +91,12 @@ Car _carDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Car();
-  object.color = reader.readStringOrNull(offsets[0]);
+  object.color = reader.readString(offsets[0]);
+  object.firstMiles = reader.readString(offsets[1]);
   object.id = id;
-  object.name = reader.readStringOrNull(offsets[1]);
-  object.totalMiles = reader.readStringOrNull(offsets[2]);
-  object.year = reader.readStringOrNull(offsets[3]);
+  object.name = reader.readString(offsets[2]);
+  object.totalMiles = reader.readString(offsets[3]);
+  object.year = reader.readString(offsets[4]);
   return object;
 }
 
@@ -120,13 +108,15 @@ P _carDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -220,24 +210,8 @@ extension CarQueryWhere on QueryBuilder<Car, Car, QWhereClause> {
 }
 
 extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
-  QueryBuilder<Car, Car, QAfterFilterCondition> colorIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'color',
-      ));
-    });
-  }
-
-  QueryBuilder<Car, Car, QAfterFilterCondition> colorIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'color',
-      ));
-    });
-  }
-
   QueryBuilder<Car, Car, QAfterFilterCondition> colorEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -250,7 +224,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> colorGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -265,7 +239,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> colorLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -280,8 +254,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> colorBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -364,6 +338,135 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'firstMiles',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'firstMiles',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'firstMiles',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'firstMiles',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterFilterCondition> firstMilesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'firstMiles',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Car, Car, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -416,24 +519,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Car, Car, QAfterFilterCondition> nameIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'name',
-      ));
-    });
-  }
-
-  QueryBuilder<Car, Car, QAfterFilterCondition> nameIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'name',
-      ));
-    });
-  }
-
   QueryBuilder<Car, Car, QAfterFilterCondition> nameEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -446,7 +533,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> nameGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -461,7 +548,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> nameLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -476,8 +563,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> nameBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -560,24 +647,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'totalMiles',
-      ));
-    });
-  }
-
-  QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'totalMiles',
-      ));
-    });
-  }
-
   QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -590,7 +661,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -605,7 +676,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -620,8 +691,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> totalMilesBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -705,24 +776,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Car, Car, QAfterFilterCondition> yearIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'year',
-      ));
-    });
-  }
-
-  QueryBuilder<Car, Car, QAfterFilterCondition> yearIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'year',
-      ));
-    });
-  }
-
   QueryBuilder<Car, Car, QAfterFilterCondition> yearEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -735,7 +790,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> yearGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -750,7 +805,7 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> yearLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -765,8 +820,8 @@ extension CarQueryFilter on QueryBuilder<Car, Car, QFilterCondition> {
   }
 
   QueryBuilder<Car, Car, QAfterFilterCondition> yearBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -867,6 +922,18 @@ extension CarQuerySortBy on QueryBuilder<Car, Car, QSortBy> {
     });
   }
 
+  QueryBuilder<Car, Car, QAfterSortBy> sortByFirstMiles() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'firstMiles', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterSortBy> sortByFirstMilesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'firstMiles', Sort.desc);
+    });
+  }
+
   QueryBuilder<Car, Car, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -914,6 +981,18 @@ extension CarQuerySortThenBy on QueryBuilder<Car, Car, QSortThenBy> {
   QueryBuilder<Car, Car, QAfterSortBy> thenByColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterSortBy> thenByFirstMiles() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'firstMiles', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Car, Car, QAfterSortBy> thenByFirstMilesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'firstMiles', Sort.desc);
     });
   }
 
@@ -974,6 +1053,13 @@ extension CarQueryWhereDistinct on QueryBuilder<Car, Car, QDistinct> {
     });
   }
 
+  QueryBuilder<Car, Car, QDistinct> distinctByFirstMiles(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'firstMiles', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Car, Car, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1003,25 +1089,31 @@ extension CarQueryProperty on QueryBuilder<Car, Car, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Car, String?, QQueryOperations> colorProperty() {
+  QueryBuilder<Car, String, QQueryOperations> colorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'color');
     });
   }
 
-  QueryBuilder<Car, String?, QQueryOperations> nameProperty() {
+  QueryBuilder<Car, String, QQueryOperations> firstMilesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'firstMiles');
+    });
+  }
+
+  QueryBuilder<Car, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
     });
   }
 
-  QueryBuilder<Car, String?, QQueryOperations> totalMilesProperty() {
+  QueryBuilder<Car, String, QQueryOperations> totalMilesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalMiles');
     });
   }
 
-  QueryBuilder<Car, String?, QQueryOperations> yearProperty() {
+  QueryBuilder<Car, String, QQueryOperations> yearProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'year');
     });

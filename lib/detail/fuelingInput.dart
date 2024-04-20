@@ -19,6 +19,13 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   final costController = TextEditingController();
   final milesController = TextEditingController();
   final dateController = TextEditingController();
+  late Car car;
+
+  @override
+  void initState() {
+    super.initState();
+    car = widget.car;
+  }
 
   @override
   void dispose() {
@@ -27,6 +34,39 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     milesController.dispose();
     dateController.dispose();
     super.dispose();
+  }
+
+  checkMiles() async {
+    if (fuelController.text == '' || costController == '' || milesController == '' || dateController == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error, You need to fill all'))
+      );
+    } else {
+      int preMiles = int.parse(widget.car.totalMiles);
+      int curMiles = int.parse(milesController.text);
+      int fuel = int.parse(fuelController.text);
+
+      if (curMiles < preMiles) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error, You need to enter higher number than Total Miles'))
+        );
+      } else {
+        final fueling = Fueling()
+          ..carID = widget.car.id
+          ..fuel = fuelController.text
+          ..cost = costController.text
+          ..aveFuel = (curMiles - preMiles) / fuel
+          ..inputMiles = milesController.text
+          ..date = dateController.text;
+        car
+          ..totalMiles = milesController.text;
+        await widget.isar.writeTxn(() async {
+          await widget.isar.fuelings.put(fueling);
+          await widget.isar.cars.put(car);
+        });
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   @override
@@ -96,16 +136,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  final fueling = Fueling()
-                    ..carID = widget.car.id
-                    ..fuel = fuelController.text
-                    ..cost = costController.text
-                    ..inputMiles = milesController.text
-                    ..date = dateController.text;
-                  await widget.isar.writeTxn(() async {
-                    await widget.isar.fuelings.put(fueling);
-                  });
-                  Navigator.of(context).pop();
+                  checkMiles();
                 },
                 child: Text('Submit', style: TextStyle(color: Colors.white)),
               ),
