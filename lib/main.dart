@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MyCarLog',
+      title: 'MyCarLogs',
       theme: ThemeData(
         brightness: Brightness.light,
         textTheme: GoogleFonts.antonTextTheme(

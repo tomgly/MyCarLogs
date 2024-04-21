@@ -35,7 +35,7 @@ class _ListPageState extends State<ListPage> {
     loadData();
     return Scaffold(
       appBar: AppBar(
-        title: Text('MyCarLog', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text('MyCarLogs', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green,
         actions: <Widget>[
           IconButton(
