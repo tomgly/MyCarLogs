@@ -1,4 +1,4 @@
-package com.tomgly.mycarlog.mycarlog;
+package com.tomgly.mycarlogs;
 
 import io.flutter.embedding.android.FlutterActivity;
 
