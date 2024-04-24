@@ -64,7 +64,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Date',
+                labelText: 'Date',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -86,7 +86,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  if (repairController.text == '' || costController == '' ||dateController == '') {
+                  FocusScope.of(context).unfocus();
+                  if (repairController.text.isEmpty || costController.text.isEmpty ||dateController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Error, You need to fill all'))
                     );

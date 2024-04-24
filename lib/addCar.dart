@@ -19,6 +19,15 @@ class _AddCarPageState extends State<AddCarPage> {
   final yearController = TextEditingController();
 
   @override
+  void dispose() {
+    nameController.dispose();
+    colorController.dispose();
+    milesController.dispose();
+    yearController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +74,7 @@ class _AddCarPageState extends State<AddCarPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Year',
+                labelText: 'Year',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -101,7 +110,8 @@ class _AddCarPageState extends State<AddCarPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
-                  if (nameController.text == '' || colorController == '' || milesController == '' || yearController == '') {
+                  FocusScope.of(context).unfocus();
+                  if (nameController.text.isEmpty || colorController.text.isEmpty || milesController.text.isEmpty || yearController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Error, You need to fill all'))
                     );

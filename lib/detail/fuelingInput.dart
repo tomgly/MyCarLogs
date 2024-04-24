@@ -37,14 +37,15 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   }
 
   checkMiles() async {
-    if (fuelController.text == '' || costController == '' || milesController == '' || dateController == '') {
+    FocusScope.of(context).unfocus();
+    if (fuelController.text.isEmpty || costController.text.isEmpty || milesController.text.isEmpty || dateController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error, You need to fill all'))
       );
     } else {
       int preMiles = int.parse(widget.car.totalMiles);
       int curMiles = int.parse(milesController.text);
-      int fuel = int.parse(fuelController.text);
+      double fuel = double.parse(fuelController.text);
 
       if (curMiles < preMiles) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +116,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Date',
+                labelText: 'Date',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {

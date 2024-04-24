@@ -66,7 +66,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
   }
 
   save() {
-    if (mainController.text == '' || costController == '' || dateController == '') {
+    if (mainController.text.isEmpty || costController.text.isEmpty || dateController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error, You need to fill all'))
       );
@@ -104,7 +104,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit ' + word),
+        title: Text('Edit ' + word, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green,
       ),
       resizeToAvoidBottomInset: false,
@@ -138,7 +138,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Date',
+                labelText: 'Date',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {

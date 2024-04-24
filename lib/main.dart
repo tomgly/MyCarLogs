@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'carList.dart';
@@ -30,9 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'MyCarLogs',
       theme: ThemeData(
         brightness: Brightness.light,
-        textTheme: GoogleFonts.antonTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        fontFamily: 'CarterOne',
         primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
