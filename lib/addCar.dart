@@ -17,6 +17,8 @@ class _AddCarPageState extends State<AddCarPage> {
   final colorController = TextEditingController();
   final milesController = TextEditingController();
   final yearController = TextEditingController();
+  bool menuVisible = false;
+  List<String> itemList = ['White', 'Gray', 'Black'];
 
   @override
   void dispose() {
@@ -55,7 +57,36 @@ class _AddCarPageState extends State<AddCarPage> {
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
                 labelText: 'Body Color',
-                border: OutlineInputBorder()
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.color_lens),
+                  onPressed: () {
+                    setState(() {
+                      menuVisible = true;
+                    });
+                  },
+                )
+              ),
+            ),
+            SizedBox(height: 5),
+            Visibility(
+              visible: menuVisible,
+              child: DropdownMenu(
+                enableFilter: true,
+                requestFocusOnTap: true,
+                dropdownMenuEntries: itemList
+                    .map(
+                      (item) => DropdownMenuEntry(
+                    value: item,
+                    label: item,
+                  ),
+                ).toList(),
+                onSelected: (newVal) {
+                  setState(() {
+                    colorController.text = newVal.toString();
+                    menuVisible = false;
+                  });
+                },
               ),
             ),
             SizedBox(height: 8),
