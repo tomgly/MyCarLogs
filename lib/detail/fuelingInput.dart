@@ -18,7 +18,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   final fuelController = TextEditingController();
   final costController = TextEditingController();
   late TextEditingController milesController;
-  final dateController = TextEditingController();
+  late TextEditingController dateController;
   late Car car;
 
   @override
@@ -26,6 +26,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     super.initState();
     car = widget.car;
     milesController = TextEditingController(text: car.totalMiles);
+    dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
   }
 
   @override

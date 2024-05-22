@@ -17,13 +17,18 @@ class RepairInputPage extends StatefulWidget {
 class _RepairInputPageState extends State<RepairInputPage> {
   final repairController = TextEditingController();
   final costController = TextEditingController();
-  final dateController = TextEditingController();
+  late TextEditingController dateController;
+
+  @override
+  void initState() {
+    super.initState();
+    dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
+  }
 
   @override
   void dispose() {
     repairController.dispose();
     costController.dispose();
-    dateController.dispose();
     super.dispose();
   }
 

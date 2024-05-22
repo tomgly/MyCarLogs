@@ -17,13 +17,18 @@ class MaintenanceInputPage extends StatefulWidget {
 class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   final descriptionController= TextEditingController();
   final costController = TextEditingController();
-  final dateController = TextEditingController();
+  late TextEditingController dateController;
+
+  @override
+  void initState() {
+    super.initState();
+    dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
+  }
 
   @override
   void dispose() {
     descriptionController.dispose();
     costController.dispose();
-    dateController.dispose();
     super.dispose();
   }
 
