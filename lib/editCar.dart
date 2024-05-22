@@ -53,6 +53,9 @@ class _EditPageState extends State<EditPage> {
                 labelText: 'Car Name',
                 border: OutlineInputBorder()
               ),
+              onChanged: (newVal) {
+                nameController.text = newVal.capitalize();
+              },
             ),
             const SizedBox(height: 8),
             TextField(
@@ -186,5 +189,11 @@ class _EditPageState extends State<EditPage> {
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
 }

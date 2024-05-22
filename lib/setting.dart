@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -14,19 +15,50 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  late bool isCapitalized;
+
+  @override
+  void initState() {
+    super.initState();
+    getSetting();
+  }
+
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isCapitalized = prefs.getBool('isCapitalized') ?? false;
+    });
+  }
+
+  void saveSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isCapitalized', isCapitalized);
+  }
 
   @override
   Widget build(BuildContext context) {
+    getSetting();
     return Scaffold(
       appBar: AppBar(
         title: Text('Setting', style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: Colors.green,
       ),
-      body: Container(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
-        child: Container(
-            width: double.infinity,
-            child: TextButton(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SwitchListTile.adaptive(
+              title: Text(isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter'),
+              value: isCapitalized,
+              onChanged: (newVal) async {
+                setState(() {
+                  isCapitalized = newVal;
+                  saveSetting();
+                });
+              },
+            ),
+            TextButton(
               onPressed: () {
                 showDialog(context: context, builder: (context) {
                   return AlertDialog(
@@ -60,6 +92,7 @@ class _SettingPageState extends State<SettingPage> {
               child: Text('Delete All Cars', style: TextStyle(color: Colors.red),
               ),
             )
+          ]
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'collections/car.dart';
 
 class AddCarPage extends StatefulWidget {
@@ -17,8 +18,31 @@ class _AddCarPageState extends State<AddCarPage> {
   final colorController = TextEditingController();
   final milesController = TextEditingController();
   final yearController = TextEditingController();
+  late bool isCapitalized;
   bool menuVisible = false;
-  List<String> itemList = ['White', 'Gray', 'Black'];
+  double sBox = 0.0;
+  List<String> itemList = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
+
+  @override
+  void initState() {
+    super.initState();
+    getSetting();
+  }
+
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isCapitalized = prefs.getBool('isCapitalized') ?? false;
+    });
+  }
+
+  String capitalize(text) {
+    if (isCapitalized) {
+      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+    } else {
+      return text;
+    }
+  }
 
   @override
   void dispose() {
@@ -50,43 +74,44 @@ class _AddCarPageState extends State<AddCarPage> {
                 labelText: 'Car Name',
                 border: OutlineInputBorder()
               ),
+              onChanged: (newVal) {
+                nameController.text = capitalize(newVal);
+              },
             ),
             SizedBox(height: 8),
-            TextField(
-              controller: colorController,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                labelText: 'Body Color',
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.color_lens),
-                  onPressed: () {
-                    setState(() {
-                      menuVisible = true;
-                    });
-                  },
-                )
-              ),
+            DropdownMenu(
+              width: 250,
+              hintText: 'Body Color',
+              enableFilter: false,
+              requestFocusOnTap: true,
+              dropdownMenuEntries: itemList
+                  .map(
+                    (item) => DropdownMenuEntry(
+                  value: item,
+                  label: item,
+                ),
+              ).toList(),
+              onSelected: (newVal) {
+                setState(() {
+                  colorController.text = newVal.toString();
+                  if (colorController.text == 'Other') {
+                    menuVisible = true;
+                    colorController.text = '';
+                    sBox = 8;
+                  }
+                });
+              },
             ),
-            SizedBox(height: 5),
+            SizedBox(height: sBox),
             Visibility(
               visible: menuVisible,
-              child: DropdownMenu(
-                enableFilter: true,
-                requestFocusOnTap: true,
-                dropdownMenuEntries: itemList
-                    .map(
-                      (item) => DropdownMenuEntry(
-                    value: item,
-                    label: item,
-                  ),
-                ).toList(),
-                onSelected: (newVal) {
-                  setState(() {
-                    colorController.text = newVal.toString();
-                    menuVisible = false;
-                  });
-                },
+              child: TextField(
+                controller: colorController,
+                keyboardType: TextInputType.name,
+                decoration: InputDecoration(
+                  labelText: 'Body Color',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
             SizedBox(height: 8),

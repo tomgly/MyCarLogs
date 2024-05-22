@@ -17,7 +17,7 @@ class FuelingInputPage extends StatefulWidget {
 class _FuelingInputPageState extends State<FuelingInputPage> {
   final fuelController = TextEditingController();
   final costController = TextEditingController();
-  final milesController = TextEditingController();
+  late TextEditingController milesController;
   final dateController = TextEditingController();
   late Car car;
 
@@ -25,13 +25,13 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   void initState() {
     super.initState();
     car = widget.car;
+    milesController = TextEditingController(text: car.totalMiles);
   }
 
   @override
   void dispose() {
     fuelController.dispose();
     costController.dispose();
-    milesController.dispose();
     dateController.dispose();
     super.dispose();
   }
