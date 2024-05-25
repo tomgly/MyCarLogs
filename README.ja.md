@@ -22,7 +22,7 @@ MyCarLogsは、あなたの車に関する情報を一元管理できるアプ�
 - iOS 12以降 / Android 4.4以降
 
 ## 手順
-1. アプリストアからBatterySyncをダウンロード
+1. アプリストアからMyCarLogsをダウンロード
    - iOS: [App Store](https://apps.apple.com/us/app/mycarlogs/id6499084474)
    - Android: [Google Play](https://play.google.com/store/apps/details?id=com.tomgly.mycarlogs)
 2. アプリをインストールし、起動します。

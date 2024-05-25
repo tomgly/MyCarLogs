@@ -23,7 +23,7 @@ MyCarLogs is an app that allows you to manage all information about your cars in
 - Internet connection
 
 ### Steps
-1. Download BatterySync from the app store
+1. Download MyCarLogs from the app store
    - iOS: [App Store](https://apps.apple.com/us/app/mycarlogs/id6499084474)
    - Android: [Google Play](https://play.google.com/store/apps/details?id=com.tomgly.mycarlogs)
 2. Install and launch the app.
