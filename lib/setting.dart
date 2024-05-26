@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'main.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -16,11 +17,18 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   late bool isCapitalized;
+  late String version;
 
   @override
   void initState() {
     super.initState();
     getSetting();
+    getInfo();
+  }
+
+  Future<void> getInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
   }
 
   Future<void> getSetting() async {
@@ -91,7 +99,8 @@ class _SettingPageState extends State<SettingPage> {
               },
               child: Text('Delete All Cars', style: TextStyle(color: Colors.red),
               ),
-            )
+            ),
+            Text('Version: ' + version )
           ]
         ),
       ),

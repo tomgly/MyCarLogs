@@ -19,7 +19,7 @@ MyCarLogs is an app that allows you to manage all information about your cars in
 
 ## Installation
 ### Prerequisites
-- iOS 12 or later / Android 4.4 or later
+- iOS 14 or later / Android 4.4 or later
 - Internet connection
 
 ### Steps

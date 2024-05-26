@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 
@@ -18,11 +21,28 @@ class _RepairInputPageState extends State<RepairInputPage> {
   final repairController = TextEditingController();
   final costController = TextEditingController();
   late TextEditingController dateController;
+  late bool isCapitalized;
 
   @override
   void initState() {
     super.initState();
+    getSetting();
     dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
+  }
+
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isCapitalized = prefs.getBool('isCapitalized') ?? false;
+    });
+  }
+
+  String capitalize(text) {
+    if (isCapitalized) {
+      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+    } else {
+      return text;
+    }
   }
 
   @override
@@ -52,6 +72,9 @@ class _RepairInputPageState extends State<RepairInputPage> {
                 labelText: 'Repair',
                 border: OutlineInputBorder()
               ),
+              onChanged: (newVal) {
+                repairController.text = capitalize(newVal);
+              },
             ),
             SizedBox(height: 20),
             TextField(
