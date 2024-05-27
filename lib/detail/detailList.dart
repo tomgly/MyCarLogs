@@ -32,7 +32,7 @@ class _DetailListPageState extends State<DetailListPage> {
   }
 
   Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences().getThemeColor();
+    final getThemeColor = await UserPreferences.getThemeColor();
     setState(() {
       themeColor = getThemeColor;
     });

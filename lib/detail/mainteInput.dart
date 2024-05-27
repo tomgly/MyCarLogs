@@ -30,8 +30,8 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   }
 
   Future<void> getSetting() async {
-    final getCapitalize = await UserPreferences().getCapitalize();
-    final getThemeColor = await UserPreferences().getThemeColor();
+    final getCapitalize = await UserPreferences.getCapitalize();
+    final getThemeColor = await UserPreferences.getThemeColor();
     setState(() {
       isCapitalized = getCapitalize;
       themeColor = getThemeColor;

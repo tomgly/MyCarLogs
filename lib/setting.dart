@@ -29,9 +29,9 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   Future<void> _getSetting() async {
-    final getCapitalize = await UserPreferences().getCapitalize();
-    final getThemeColor = await UserPreferences().getThemeColor();
-    final getVersion = await UserPreferences().getVersion();
+    final getCapitalize = await UserPreferences.getCapitalize();
+    final getThemeColor = await UserPreferences.getThemeColor();
+    final getVersion = await UserPreferences.getVersion();
     setState(() {
       _isCapitalized = getCapitalize;
       _themeColor = getThemeColor;
@@ -154,18 +154,26 @@ class _SettingPageState extends State<SettingPage> {
 }
 
 class UserPreferences {
-  Future<bool> getCapitalize() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isCapitalized') ?? false;
-  }
+  static late SharedPreferences _prefs;
+  static const _keyLanguage = 'language';
 
-  Future<Color> getThemeColor() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
-  }
+  static Future init() async =>
+      _prefs = await SharedPreferences.getInstance();
 
-  Future<String> getVersion() async {
+  static Future<bool> getCapitalize() async =>
+      _prefs.getBool('isCapitalized') ?? false;
+
+  static Future<Color> getThemeColor() async =>
+      Color(_prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+
+  static Future<String> getVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
   }
+
+  static Future setLanguage(String languageCode) async =>
+      await _prefs.setString(_keyLanguage, languageCode);
+
+  static String? getLanguage() =>
+      _prefs.getString(_keyLanguage);
 }

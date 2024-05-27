@@ -36,7 +36,7 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences().getThemeColor();
+    final getThemeColor = await UserPreferences.getThemeColor();
     setState(() {
       themeColor = getThemeColor;
     });

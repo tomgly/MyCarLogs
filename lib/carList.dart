@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'collections/car.dart';
 import 'addCar.dart';
 import 'setting.dart';
@@ -24,7 +25,7 @@ class _ListPageState extends State<ListPage> {
   }
 
   Future<void> loadData() async {
-    final getThemeColor = await UserPreferences().getThemeColor();
+    final getThemeColor = await UserPreferences.getThemeColor();
     final data = await widget.isar.cars.where().findAll();
 
     setState(() {
@@ -66,7 +67,9 @@ class _ListPageState extends State<ListPage> {
                   padding: const EdgeInsets.all(10),
                   child: ListTile(
                     title: Text(car.name, style: TextStyle(color: Colors.black)),
-                    subtitle: Text('Color: ' + (car.color) + ', Year: ' + (car.year)),
+                    subtitle: Text((AppLocalizations.of(context)?.color ?? 'Color') + ': ' + (car.color) + ', ' +
+                        (AppLocalizations.of(context)?.year ?? 'Year') + ': ' + (car.year)),
+                    //subtitle: Text('Color: ' + (car.color) + ', Year: ' + (car.year)),
                     tileColor: Color(0xffddffdd),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(25)),

@@ -34,7 +34,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future<void> loadData() async {
-    final getThemeColor = await UserPreferences().getThemeColor();
+    final getThemeColor = await UserPreferences.getThemeColor();
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
