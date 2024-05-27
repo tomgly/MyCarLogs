@@ -19,26 +19,18 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool _isCapitalized = false;
-  String _version = '0.0';
-  Color _themeColor = Colors.green;
+  late bool _isCapitalized;
+  late String _version;
+  late Color _themeColor;
   Color _pickerColor = Colors.green;
 
   @override
   void initState() {
     super.initState();
-    _getSetting();
-  }
+    _isCapitalized = UserPreferences.getCapitalize();
+    _themeColor = UserPreferences.getThemeColor();
+    _version = UserPreferences.getVersion();
 
-  Future<void> _getSetting() async {
-    final getCapitalize = await UserPreferences.getCapitalize();
-    final getThemeColor = await UserPreferences.getThemeColor();
-    final getVersion = await UserPreferences.getVersion();
-    setState(() {
-      _isCapitalized = getCapitalize;
-      _themeColor = getThemeColor;
-      _version = getVersion;
-    });
   }
 
   void _showPicker(BuildContext context) {
@@ -75,7 +67,6 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    _getSetting();
     return Scaffold(
       appBar: AppBar(
         title: Text('Setting', style: TextStyle(color: Colors.black, fontSize: 25)),
@@ -174,25 +165,26 @@ class _SettingPageState extends State<SettingPage> {
 
 class UserPreferences {
   static late SharedPreferences _prefs;
+  static late PackageInfo _packageInfo;
   static const _keyLanguage = 'language';
 
-  static Future init() async =>
-      _prefs = await SharedPreferences.getInstance();
+  static Future init() async => (
+    _prefs = await SharedPreferences.getInstance(),
+    _packageInfo = await PackageInfo.fromPlatform()
+  );
 
   static bool getCapitalize() =>
-      _prefs.getBool('isCapitalized') ?? false;
+    _prefs.getBool('isCapitalized') ?? false;
 
   static Color getThemeColor() =>
-      Color(_prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+    Color(_prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
 
-  static Future<String> getVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.version;
-  }
+  static String getVersion() =>
+    _packageInfo.version;
 
   static Future setLanguage(String languageCode) async =>
-      await _prefs.setString(_keyLanguage, languageCode);
+    await _prefs.setString(_keyLanguage, languageCode);
 
   static String? getLanguage() =>
-      _prefs.getString(_keyLanguage);
+    _prefs.getString(_keyLanguage);
 }

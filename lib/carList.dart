@@ -18,7 +18,7 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   List<Car> cars = [];
-  late Color themeColor;
+  Color themeColor = Colors.green;
 
   @override
   void initState() {
