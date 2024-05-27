@@ -29,7 +29,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     car = widget.car;
     milesController = TextEditingController(text: car.totalMiles);
     dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
-    getSetting();
+    themeColor = UserPreferences.getThemeColor();
   }
 
   @override
@@ -38,13 +38,6 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     costController.dispose();
     dateController.dispose();
     super.dispose();
-  }
-
-  Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      themeColor = getThemeColor;
-    });
   }
 
   checkMiles() async {

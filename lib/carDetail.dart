@@ -25,16 +25,16 @@ class _DetailPageState extends State<DetailPage> {
   List<Fueling> fuelings = [];
   List<Maintenance> maintes = [];
   List<Repair> repairs = [];
-  Color themeColor = Colors.green;
+  late Color themeColor;
 
   @override
   void initState() {
     super.initState();
     car = widget.car;
+    themeColor = UserPreferences.getThemeColor();
   }
 
   Future<void> loadData() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
@@ -45,7 +45,6 @@ class _DetailPageState extends State<DetailPage> {
       fuelings = fuelingData.cast<Fueling>();
       maintes = mainteData.cast<Maintenance>();
       repairs = repairData.cast<Repair>();
-      themeColor = getThemeColor;
     });
   }
 

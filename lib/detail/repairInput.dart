@@ -25,17 +25,9 @@ class _RepairInputPageState extends State<RepairInputPage> {
   @override
   void initState() {
     super.initState();
-    getSetting();
     dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
-  }
-
-  Future<void> getSetting() async {
-    final getCapitalize = await UserPreferences.getCapitalize();
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      isCapitalized = getCapitalize;
-      themeColor = getThemeColor;
-    });
+    isCapitalized = UserPreferences.getCapitalize();
+    themeColor = UserPreferences.getThemeColor();
   }
 
   String capitalize(text) {

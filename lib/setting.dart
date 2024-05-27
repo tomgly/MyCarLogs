@@ -3,14 +3,16 @@ import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'main.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 
 class SettingPage extends StatefulWidget {
   final Isar isar;
+  final ValueChanged<String> onLanguageChanged;
 
-  SettingPage({required this.isar});
+  SettingPage({required this.isar, required this.onLanguageChanged});
 
   @override
   _SettingPageState createState() => _SettingPageState();
@@ -98,6 +100,24 @@ class _SettingPageState extends State<SettingPage> {
               ],
             ),
             SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.lang, style: TextStyle(fontSize: 18)),
+                SizedBox(width: 20),
+                DropdownButton<String>(
+                  value: UserPreferences.getLanguage(),
+                  items: [
+                    DropdownMenuItem(value: 'en', child: Text('English')),
+                    DropdownMenuItem(value: 'ja', child: Text('日本語')),
+                  ],
+                  onChanged: (value) {
+                    widget.onLanguageChanged(value!);
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             SwitchListTile.adaptive(
               title: Text(_isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter', style: TextStyle(fontSize: 18)),
               value: _isCapitalized,
@@ -126,8 +146,7 @@ class _SettingPageState extends State<SettingPage> {
                             await widget.isar.repairs.where().deleteAll();
                           });
                           Navigator.pushAndRemoveUntil( context,
-                              MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)),
-                                  (_) => false
+                              MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)), (_) => false
                           );
                         },
                       ),
@@ -160,10 +179,10 @@ class UserPreferences {
   static Future init() async =>
       _prefs = await SharedPreferences.getInstance();
 
-  static Future<bool> getCapitalize() async =>
+  static bool getCapitalize() =>
       _prefs.getBool('isCapitalized') ?? false;
 
-  static Future<Color> getThemeColor() async =>
+  static Color getThemeColor() =>
       Color(_prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
 
   static Future<String> getVersion() async {

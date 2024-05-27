@@ -55,14 +55,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
       costController = TextEditingController(text: repair.cost);
       dateController = TextEditingController(text: repair.date);
     }
-    getSetting();
-  }
-
-  Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      themeColor = getThemeColor;
-    });
+    themeColor = UserPreferences.getThemeColor();
   }
 
   selectedDate() {

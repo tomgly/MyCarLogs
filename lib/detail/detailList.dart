@@ -28,14 +28,7 @@ class _DetailListPageState extends State<DetailListPage> {
   void initState() {
     super.initState();
     car = widget.car;
-    getSetting();
-  }
-
-  Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      themeColor = getThemeColor;
-    });
+    themeColor = UserPreferences.getThemeColor();
   }
 
   Future<void> loadData() async {

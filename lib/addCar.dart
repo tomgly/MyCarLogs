@@ -18,8 +18,8 @@ class _AddCarPageState extends State<AddCarPage> {
   final colorController = TextEditingController();
   final milesController = TextEditingController();
   final yearController = TextEditingController();
-  bool isCapitalized = false;
-  Color themeColor = Colors.green;
+  late bool isCapitalized;
+  late Color themeColor;
   bool menuVisible = false;
   double sBox = 0.0;
   List<String> itemList = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
@@ -27,16 +27,8 @@ class _AddCarPageState extends State<AddCarPage> {
   @override
   void initState() {
     super.initState();
-    getSetting();
-  }
-
-  Future<void> getSetting() async {
-    final getCapitalize = await UserPreferences.getCapitalize();
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      isCapitalized = getCapitalize;
-      themeColor = getThemeColor;
-    });
+    isCapitalized = UserPreferences.getCapitalize();
+    themeColor = UserPreferences.getThemeColor();
   }
 
   String capitalize(text) {

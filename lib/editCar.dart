@@ -22,7 +22,7 @@ class _EditPageState extends State<EditPage> {
   late TextEditingController colorController;
   late TextEditingController milesController;
   late TextEditingController yearController;
-  Color themeColor = Colors.green;
+  late Color themeColor;
 
   @override
   void initState() {
@@ -32,14 +32,7 @@ class _EditPageState extends State<EditPage> {
     colorController = TextEditingController(text: car.color);
     milesController = TextEditingController(text: car.totalMiles);
     yearController = TextEditingController(text: car.year);
-    getSetting();
-  }
-
-  Future<void> getSetting() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
-    setState(() {
-      themeColor = getThemeColor;
-    });
+    themeColor = UserPreferences.getThemeColor();
   }
 
   @override

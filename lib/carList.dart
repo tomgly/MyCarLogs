@@ -8,8 +8,9 @@ import 'carDetail.dart';
 
 class ListPage extends StatefulWidget {
   final Isar isar;
+  final ValueChanged<String> onLanguageChanged;
 
-  ListPage({required this.isar});
+  ListPage({required this.isar, required this.onLanguageChanged});
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -17,7 +18,7 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   List<Car> cars = [];
-  Color themeColor = Colors.green;
+  late Color themeColor;
 
   @override
   void initState() {
@@ -25,12 +26,10 @@ class _ListPageState extends State<ListPage> {
   }
 
   Future<void> loadData() async {
-    final getThemeColor = await UserPreferences.getThemeColor();
     final data = await widget.isar.cars.where().findAll();
-
     setState(() {
       cars = data;
-      themeColor = getThemeColor;
+      themeColor = UserPreferences.getThemeColor();
     });
   }
 
@@ -46,7 +45,7 @@ class _ListPageState extends State<ListPage> {
             onPressed: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return SettingPage(isar: widget.isar);
+                  return SettingPage(isar: widget.isar, onLanguageChanged: widget.onLanguageChanged);
                 }),
               );
             },
@@ -67,8 +66,8 @@ class _ListPageState extends State<ListPage> {
                   padding: const EdgeInsets.all(10),
                   child: ListTile(
                     title: Text(car.name, style: TextStyle(color: Colors.black)),
-                    subtitle: Text((AppLocalizations.of(context)?.color ?? 'Color') + ': ' + (car.color) + ', ' +
-                        (AppLocalizations.of(context)?.year ?? 'Year') + ': ' + (car.year)),
+                    subtitle: Text(AppLocalizations.of(context)!.color + ': ' + (car.color) + ', ' +
+                        AppLocalizations.of(context)!.year + ': ' + (car.year)),
                     //subtitle: Text('Color: ' + (car.color) + ', Year: ' + (car.year)),
                     tileColor: Color(0xffddffdd),
                     shape: RoundedRectangleBorder(
