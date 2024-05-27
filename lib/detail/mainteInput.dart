@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
+import '../setting.dart';
 
 class MaintenanceInputPage extends StatefulWidget {
   final Isar isar;
@@ -30,10 +30,11 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   }
 
   Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getCapitalize = await UserPreferences().getCapitalize();
+    final getThemeColor = await UserPreferences().getThemeColor();
     setState(() {
-      isCapitalized = prefs.getBool('isCapitalized') ?? false;
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      isCapitalized = getCapitalize;
+      themeColor = getThemeColor;
     });
   }
 

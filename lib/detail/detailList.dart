@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'detailEdit.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
+import '../setting.dart';
 
 class DetailListPage extends StatefulWidget {
   final Isar isar;
@@ -30,10 +30,11 @@ class _DetailListPageState extends State<DetailListPage> {
     car = widget.car;
     getSetting();
   }
+
   Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getThemeColor = await UserPreferences().getThemeColor();
     setState(() {
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      themeColor = getThemeColor;
     });
   }
 

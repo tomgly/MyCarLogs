@@ -17,32 +17,29 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool isCapitalized = false;
-  String version = '0.0';
-  Color themeColor = Colors.green;
-  Color pickerColor = Colors.green;
+  bool _isCapitalized = false;
+  String _version = '0.0';
+  Color _themeColor = Colors.green;
+  Color _pickerColor = Colors.green;
 
   @override
   void initState() {
     super.initState();
-    getSetting();
-    getInfo();
+    _getSetting();
   }
 
-  Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _getSetting() async {
+    final getCapitalize = await UserPreferences().getCapitalize();
+    final getThemeColor = await UserPreferences().getThemeColor();
+    final getVersion = await UserPreferences().getVersion();
     setState(() {
-      isCapitalized = prefs.getBool('isCapitalized') ?? false;
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      _isCapitalized = getCapitalize;
+      _themeColor = getThemeColor;
+      _version = getVersion;
     });
   }
 
-  Future<void> getInfo() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    version = packageInfo.version;
-  }
-
-  void showPicker(BuildContext context) {
+  void _showPicker(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -50,9 +47,9 @@ class _SettingPageState extends State<SettingPage> {
           title: const Text('Pick a theme color'),
           content: SingleChildScrollView(
             child: BlockPicker(
-              pickerColor: themeColor,
+              pickerColor: _themeColor,
               onColorChanged: (newVal) {
-                pickerColor = newVal;
+                _pickerColor = newVal;
               },
             ),
           ),
@@ -61,10 +58,10 @@ class _SettingPageState extends State<SettingPage> {
               child: Text('Got it'),
               onTap: () async {
                 setState(() {
-                  themeColor = pickerColor;
+                  _themeColor = _pickerColor;
                 });
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setInt('themeColor', pickerColor.value);
+                await prefs.setInt('themeColor', _pickerColor.value);
                 Navigator.of(context).pop();
               },
             )
@@ -76,11 +73,11 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    getSetting();
+    _getSetting();
     return Scaffold(
       appBar: AppBar(
         title: Text('Setting', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: themeColor,
+        backgroundColor: _themeColor,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
@@ -94,22 +91,22 @@ class _SettingPageState extends State<SettingPage> {
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
-                    showPicker(context);
+                    _showPicker(context);
                   },
-                  child: Icon(Icons.color_lens, color: themeColor),
+                  child: Icon(Icons.color_lens, color: _themeColor),
                 ),
               ],
             ),
             SizedBox(height: 10),
             SwitchListTile.adaptive(
-              title: Text(isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter', style: TextStyle(fontSize: 18)),
-              value: isCapitalized,
+              title: Text(_isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter', style: TextStyle(fontSize: 18)),
+              value: _isCapitalized,
               onChanged: (newVal) async {
                 setState(() {
-                  isCapitalized = newVal;
+                  _isCapitalized = newVal;
                 });
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('isCapitalized', isCapitalized);
+                await prefs.setBool('isCapitalized', _isCapitalized);
               },
             ),
             SizedBox(height: 10),
@@ -148,10 +145,27 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
             SizedBox(height: 8),
-            Text('Version: ' + version, style: TextStyle(fontSize: 15))
+            Text('Version: ' + _version, style: TextStyle(fontSize: 15))
           ]
         ),
       ),
     );
+  }
+}
+
+class UserPreferences {
+  Future<bool> getCapitalize() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isCapitalized') ?? false;
+  }
+
+  Future<Color> getThemeColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+  }
+
+  Future<String> getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 }

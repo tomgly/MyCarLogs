@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'main.dart';
+import 'setting.dart';
 
 class EditPage extends StatefulWidget {
   final Isar isar;
@@ -36,9 +36,9 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getThemeColor = await UserPreferences().getThemeColor();
     setState(() {
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      themeColor = getThemeColor;
     });
   }
 

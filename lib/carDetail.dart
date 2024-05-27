@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'editCar.dart';
@@ -9,6 +8,7 @@ import 'detail/detailList.dart';
 import 'detail/fuelingInput.dart';
 import 'detail/mainteInput.dart';
 import 'detail/repairInput.dart';
+import 'setting.dart';
 
 class DetailPage extends StatefulWidget {
   final Isar isar;
@@ -34,7 +34,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future<void> loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getThemeColor = await UserPreferences().getThemeColor();
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
@@ -45,7 +45,7 @@ class _DetailPageState extends State<DetailPage> {
       fuelings = fuelingData.cast<Fueling>();
       maintes = mainteData.cast<Maintenance>();
       repairs = repairData.cast<Repair>();
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      themeColor = getThemeColor;
     });
   }
 

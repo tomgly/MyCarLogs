@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../collections/input.dart';
+import '../setting.dart';
 
 class DetailEditPage extends StatefulWidget {
   final Isar isar;
@@ -59,9 +59,9 @@ class _DetailEditPageState extends State<DetailEditPage> {
   }
 
   Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getThemeColor = await UserPreferences().getThemeColor();
     setState(() {
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      themeColor = getThemeColor;
     });
   }
 

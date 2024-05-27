@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:isar/isar.dart';
 import 'collections/car.dart';
 import 'addCar.dart';
@@ -25,12 +24,12 @@ class _ListPageState extends State<ListPage> {
   }
 
   Future<void> loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final getThemeColor = await UserPreferences().getThemeColor();
     final data = await widget.isar.cars.where().findAll();
 
     setState(() {
       cars = data;
-      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+      themeColor = getThemeColor;
     });
   }
 
