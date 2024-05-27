@@ -18,7 +18,8 @@ class _AddCarPageState extends State<AddCarPage> {
   final colorController = TextEditingController();
   final milesController = TextEditingController();
   final yearController = TextEditingController();
-  late bool isCapitalized;
+  bool isCapitalized = false;
+  Color themeColor = Colors.green;
   bool menuVisible = false;
   double sBox = 0.0;
   List<String> itemList = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
@@ -33,6 +34,7 @@ class _AddCarPageState extends State<AddCarPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isCapitalized = prefs.getBool('isCapitalized') ?? false;
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
     });
   }
 
@@ -58,7 +60,7 @@ class _AddCarPageState extends State<AddCarPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Your Car', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(

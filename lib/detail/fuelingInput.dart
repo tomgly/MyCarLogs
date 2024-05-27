@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 
@@ -20,6 +21,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   late TextEditingController milesController;
   late TextEditingController dateController;
   late Car car;
+  late Color themeColor;
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     car = widget.car;
     milesController = TextEditingController(text: car.totalMiles);
     dateController = TextEditingController(text: DateFormat('MM/dd/yyyy').format(DateTime.now()));
+    getSetting();
   }
 
   @override
@@ -35,6 +38,13 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     costController.dispose();
     dateController.dispose();
     super.dispose();
+  }
+
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+    });
   }
 
   checkMiles() async {
@@ -76,7 +86,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Fueling', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green
+        backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
       body: Padding(

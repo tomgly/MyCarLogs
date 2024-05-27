@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:isar/isar.dart';
 import 'collections/car.dart';
 import 'addCar.dart';
@@ -16,17 +17,20 @@ class ListPage extends StatefulWidget {
 
 class _ListPageState extends State<ListPage> {
   List<Car> cars = [];
+  Color themeColor = Colors.green;
 
   @override
   void initState() {
     super.initState();
-    loadData();
   }
 
   Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final data = await widget.isar.cars.where().findAll();
+
     setState(() {
       cars = data;
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
     });
   }
 
@@ -36,7 +40,7 @@ class _ListPageState extends State<ListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('MyCarLogs', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
         actions: <Widget>[
           IconButton(
             onPressed: () async {

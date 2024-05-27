@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'main.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -16,8 +17,10 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  late bool isCapitalized;
-  late String version;
+  bool isCapitalized = false;
+  String version = '0.0';
+  Color themeColor = Colors.green;
+  Color pickerColor = Colors.green;
 
   @override
   void initState() {
@@ -26,21 +29,49 @@ class _SettingPageState extends State<SettingPage> {
     getInfo();
   }
 
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isCapitalized = prefs.getBool('isCapitalized') ?? false;
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+    });
+  }
+
   Future<void> getInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     version = packageInfo.version;
   }
 
-  Future<void> getSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isCapitalized = prefs.getBool('isCapitalized') ?? false;
-    });
-  }
-
-  void saveSetting() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isCapitalized', isCapitalized);
+  void showPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pick a theme color'),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor: themeColor,
+              onColorChanged: (newVal) {
+                pickerColor = newVal;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            GestureDetector(
+              child: Text('Got it'),
+              onTap: () async {
+                setState(() {
+                  themeColor = pickerColor;
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setInt('themeColor', pickerColor.value);
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -49,23 +80,39 @@ class _SettingPageState extends State<SettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Setting', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Theme Color', style: TextStyle(fontSize: 18)),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    showPicker(context);
+                  },
+                  child: Icon(Icons.color_lens, color: themeColor),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             SwitchListTile.adaptive(
-              title: Text(isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter'),
+              title: Text(isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter', style: TextStyle(fontSize: 18)),
               value: isCapitalized,
               onChanged: (newVal) async {
                 setState(() {
                   isCapitalized = newVal;
-                  saveSetting();
                 });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isCapitalized', isCapitalized);
               },
             ),
+            SizedBox(height: 10),
             TextButton(
               onPressed: () {
                 showDialog(context: context, builder: (context) {
@@ -97,10 +144,11 @@ class _SettingPageState extends State<SettingPage> {
                   );
                 });
               },
-              child: Text('Delete All Cars', style: TextStyle(color: Colors.red),
+              child: Text('Delete All Cars', style: TextStyle(color: Colors.red, fontSize: 18),
               ),
             ),
-            Text('Version: ' + version )
+            SizedBox(height: 8),
+            Text('Version: ' + version, style: TextStyle(fontSize: 15))
           ]
         ),
       ),

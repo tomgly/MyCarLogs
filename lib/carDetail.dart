@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'editCar.dart';
@@ -24,6 +25,7 @@ class _DetailPageState extends State<DetailPage> {
   List<Fueling> fuelings = [];
   List<Maintenance> maintes = [];
   List<Repair> repairs = [];
+  Color themeColor = Colors.green;
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
@@ -42,6 +45,7 @@ class _DetailPageState extends State<DetailPage> {
       fuelings = fuelingData.cast<Fueling>();
       maintes = mainteData.cast<Maintenance>();
       repairs = repairData.cast<Repair>();
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
     });
   }
 
@@ -51,7 +55,7 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Car Details', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
         actions: <Widget>[
           IconButton(
             onPressed: () async {

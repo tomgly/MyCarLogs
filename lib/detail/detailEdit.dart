@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../collections/input.dart';
 
 class DetailEditPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
   late TextEditingController costController;
   late TextEditingController dateController;
   late String word;
+  Color themeColor = Colors.green;
 
   @override
   void dispose() {
@@ -53,6 +55,14 @@ class _DetailEditPageState extends State<DetailEditPage> {
       costController = TextEditingController(text: repair.cost);
       dateController = TextEditingController(text: repair.date);
     }
+    getSetting();
+  }
+
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+    });
   }
 
   selectedDate() {
@@ -105,7 +115,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit ' + word, style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(

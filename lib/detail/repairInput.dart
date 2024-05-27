@@ -21,7 +21,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
   final repairController = TextEditingController();
   final costController = TextEditingController();
   late TextEditingController dateController;
-  late bool isCapitalized;
+  bool isCapitalized = false;
+  Color themeColor = Colors.green;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isCapitalized = prefs.getBool('isCapitalized') ?? false;
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
     });
   }
 
@@ -57,7 +59,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Repair', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: Colors.green
+        backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
       body: Padding(

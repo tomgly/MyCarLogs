@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'detailEdit.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -21,11 +22,19 @@ class _DetailListPageState extends State<DetailListPage> {
   List<Fueling> fuelings = [];
   List<Maintenance> maintes = [];
   List<Repair> repairs = [];
+  Color themeColor = Colors.green;
 
   @override
   void initState() {
     super.initState();
     car = widget.car;
+    getSetting();
+  }
+  Future<void> getSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      themeColor = Color(prefs.getInt('themeColor') ?? Color(0xFF4CAF50).value);
+    });
   }
 
   Future<void> loadData() async {
@@ -132,7 +141,7 @@ class _DetailListPageState extends State<DetailListPage> {
     return Scaffold(
       appBar: AppBar(
         title: mainTitle(),
-        backgroundColor: Colors.green,
+        backgroundColor: themeColor,
       ),
       body: Column(
         children: [ Expanded(
