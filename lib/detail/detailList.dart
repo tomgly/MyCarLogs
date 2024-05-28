@@ -23,13 +23,21 @@ class _DetailListPageState extends State<DetailListPage> {
   List<Fueling> fuelings = [];
   List<Maintenance> maintes = [];
   List<Repair> repairs = [];
-  Color themeColor = Colors.green;
+  late Color themeColor;
+  late String distUnit;
+  late String capUnit;
+  late String aveFuelSym;
+  late String currencySymbol;
 
   @override
   void initState() {
     super.initState();
     car = widget.car;
     themeColor = UserPreferences.getThemeColor();
+    distUnit = UserPreferences.getDistUnit();
+    capUnit = UserPreferences.getCapUnit();
+    aveFuelSym = UserPreferences.getAveFuel();
+    currencySymbol = UserPreferences.getCurrencySymbol();
   }
 
   Future<void> _loadData() async {
@@ -78,9 +86,9 @@ class _DetailListPageState extends State<DetailListPage> {
   }
 
   _tileTitle(int index) {
-    final String cost = AppLocalizations.of(context)!.cost + ': \$';
+    final String cost = AppLocalizations.of(context)!.cost + ': ' + currencySymbol;
     if (widget.type == 0) {
-      return Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fuelings[index].fuel) + 'gal, ' +
+      return Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fuelings[index].fuel) + capUnit + ', ' +
           cost + (fuelings[index].cost), style: TextStyle(color: Colors.black)
       );
     } else if (widget.type == 1) {
@@ -117,7 +125,7 @@ class _DetailListPageState extends State<DetailListPage> {
 
   _trailing(int index) {
     if (widget.type == 0) {
-      return Text((fuelings[index].aveFuel.toStringAsFixed(2)) + ' mpg', style: TextStyle(fontSize: 15));
+      return Text((fuelings[index].aveFuel.toStringAsFixed(2)) + ' ' + aveFuelSym, style: TextStyle(fontSize: 15));
     } else {
       return null;
     }

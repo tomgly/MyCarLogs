@@ -20,8 +20,8 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   final descriptionController= TextEditingController();
   final costController = TextEditingController();
   late TextEditingController dateController;
-  bool isCapitalized = false;
-  Color themeColor = Colors.green;
+  late bool isCapitalized;
+  late Color themeColor;
 
   @override
   void initState() {

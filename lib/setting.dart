@@ -34,6 +34,9 @@ class _SettingPageState extends State<SettingPage> {
     themeColor = UserPreferences.getThemeColor();
     version = UserPreferences.getVersion();
     lang = UserPreferences.getLangCode();
+    distUnit = UserPreferences.getDistUnit();
+    capUnit = UserPreferences.getCapUnit();
+    currencySymbol = UserPreferences.getCurrencySymbol();
   }
 
   void _showPicker(BuildContext context) {
@@ -136,9 +139,10 @@ class _SettingPageState extends State<SettingPage> {
                     DropdownMenuItem(value: 'mi', child: Text(AppLocalizations.of(context)!.miles)),
                     DropdownMenuItem(value: 'km', child: Text(AppLocalizations.of(context)!.kilometer)),
                   ],
-                  onChanged: (newVal) {
+                  onChanged: (newVal) async {
+                    await UserPreferences.setDistUnit(newVal!);
                     setState(() {
-                      distUnit = newVal!;
+                      distUnit = newVal;
                     });
                   },
                 ),
@@ -156,9 +160,10 @@ class _SettingPageState extends State<SettingPage> {
                     DropdownMenuItem(value: 'gal', child: Text(AppLocalizations.of(context)!.gallon)),
                     DropdownMenuItem(value: 'L', child: Text(AppLocalizations.of(context)!.litter)),
                   ],
-                  onChanged: (newVal) {
+                  onChanged: (newVal) async {
+                    await UserPreferences.setCapUnit(newVal!);
                     setState(() {
-                      capUnit = newVal!;
+                      capUnit = newVal;
                     });
                   },
                 ),
@@ -176,9 +181,10 @@ class _SettingPageState extends State<SettingPage> {
                     DropdownMenuItem(value: '\$', child: Text('\$')),
                     DropdownMenuItem(value: '\¥', child: Text('\¥')),
                   ],
-                  onChanged: (newVal) {
+                  onChanged: (newVal) async {
+                    await UserPreferences.setCurrencySymbol(newVal!);
                     setState(() {
-                      currencySymbol = newVal!;
+                      currencySymbol = newVal;
                     });
                   },
                 ),
@@ -259,7 +265,7 @@ class UserPreferences {
     _packageInfo.version;
 
   static Future setLangCode(String langCode) async =>
-      await _prefs.setString('langCode', langCode);
+    await _prefs.setString('langCode', langCode);
 
   static String getLangCode() =>
     _prefs.getString('langCode') ?? 'en';
@@ -272,7 +278,29 @@ class UserPreferences {
     }
   }
 
-  static Future setUnitDist(String value) async =>
-    await _prefs.setString('unitDist', value);
+  static Future setDistUnit(String value) async =>
+    await _prefs.setString('distUnit', value);
 
+  static String getDistUnit() =>
+    _prefs.getString('distUnit') ?? 'mi';
+
+  static Future setCapUnit(String value) async =>
+    await _prefs.setString('capUnit', value);
+
+  static String getCapUnit() =>
+    _prefs.getString('capUnit') ?? 'gal';
+
+  static String getAveFuel() {
+    if (getDistUnit() == 'mi') {
+      return getDistUnit().substring(0,1) + 'p' + getCapUnit().substring(0,1);;
+    } else {
+      return getDistUnit() + 'p' + getCapUnit().substring(0,1);
+    }
+  }
+
+  static Future setCurrencySymbol(String value) async =>
+    await _prefs.setString('currencySymbol', value);
+
+  static String getCurrencySymbol() =>
+    _prefs.getString('currencySymbol') ?? '\$';
 }

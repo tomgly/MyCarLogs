@@ -25,7 +25,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
   late TextEditingController dateController;
   late String title;
   late String word;
-  Color themeColor = Colors.green;
+  late Color themeColor;
 
   @override
   void initState() {

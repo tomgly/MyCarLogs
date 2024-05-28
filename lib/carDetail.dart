@@ -27,12 +27,20 @@ class _DetailPageState extends State<DetailPage> {
   List<Maintenance> maintes = [];
   List<Repair> repairs = [];
   late Color themeColor;
+  late String distUnit;
+  late String capUnit;
+  late String aveFuelSym;
+  late String currencySymbol;
 
   @override
   void initState() {
     super.initState();
     car = widget.car;
     themeColor = UserPreferences.getThemeColor();
+    distUnit = UserPreferences.getDistUnit();
+    capUnit = UserPreferences.getCapUnit();
+    aveFuelSym = UserPreferences.getAveFuel();
+    currencySymbol = UserPreferences.getCurrencySymbol();
   }
 
   Future<void> _loadData() async {
@@ -84,7 +92,7 @@ class _DetailPageState extends State<DetailPage> {
           ),
           const SizedBox(height: 8),
           Text(
-              AppLocalizations.of(context)!.totalDist + ': ' + (NumberFormat('#,###').format(int.parse(car.totalMiles))) + ' mi',
+              AppLocalizations.of(context)!.totalDist + ': ' + (NumberFormat('#,###').format(int.parse(car.totalMiles))) + ' ' + distUnit,
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 8),
@@ -109,11 +117,11 @@ class _DetailPageState extends State<DetailPage> {
               return Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fueling.fuel) + 'gal, ' +
-                      AppLocalizations.of(context)!.cost + ': \$' + (fueling.cost), style: TextStyle(color: Colors.black)
+                  title: Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fueling.fuel) + capUnit + ', ' +
+                      AppLocalizations.of(context)!.cost + ': ' + currencySymbol + (fueling.cost), style: TextStyle(color: Colors.black)
                   ),
                   subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (fueling.date)),
-                  trailing: Text((fueling.aveFuel.toStringAsFixed(2)) + ' mpg',
+                  trailing: Text((fueling.aveFuel.toStringAsFixed(2)) + ' ' + aveFuelSym,
                   style: TextStyle(fontSize: 15)),
                   tileColor: Color(0xffffdad3),
                   shape: RoundedRectangleBorder(
@@ -168,7 +176,7 @@ class _DetailPageState extends State<DetailPage> {
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
                   title: Text(AppLocalizations.of(context)!.description + ': ' + (mainte.desc) + ', ' +
-                      AppLocalizations.of(context)!.cost + ': \$' + (mainte.cost), style: TextStyle(color: Colors.black)
+                      AppLocalizations.of(context)!.cost + ': ' + currencySymbol + (mainte.cost), style: TextStyle(color: Colors.black)
                   ),
                   subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (mainte.date)),
                   tileColor: Color(0xffd3def1),
@@ -224,7 +232,7 @@ class _DetailPageState extends State<DetailPage> {
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
                   title: Text(AppLocalizations.of(context)!.repair + ': ' + (repair.repair) + ', ' +
-                      AppLocalizations.of(context)!.cost + ': \$' + (repair.cost), style: TextStyle(color: Colors.black)
+                      AppLocalizations.of(context)!.cost + ': ' + currencySymbol + (repair.cost), style: TextStyle(color: Colors.black)
                   ),
                   subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (repair.date)),
                   tileColor: Color(0xfffff1ab),

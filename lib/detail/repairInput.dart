@@ -20,8 +20,8 @@ class _RepairInputPageState extends State<RepairInputPage> {
   final repairController = TextEditingController();
   final costController = TextEditingController();
   late TextEditingController dateController;
-  bool isCapitalized = false;
-  Color themeColor = Colors.green;
+  late bool isCapitalized;
+  late Color themeColor;
 
   @override
   void initState() {
