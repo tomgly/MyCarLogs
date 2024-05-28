@@ -23,8 +23,8 @@ class _SettingPageState extends State<SettingPage> {
   late Color themeColor;
   Color pickerColor = Colors.green;
   String lang = 'en';
-  String unitDist = 'mi';
-  String unitCap = 'gal';
+  String distUnit = 'mi';
+  String capUnit = 'gal';
   String currencySymbol = '\$';
 
   @override
@@ -128,17 +128,17 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(AppLocalizations.of(context)!.unitDist, style: TextStyle(fontSize: 18)),
+                Text(AppLocalizations.of(context)!.distUnit, style: TextStyle(fontSize: 18)),
                 const SizedBox(width: 20),
                 DropdownButton<String>(
-                  value: unitDist,
+                  value: distUnit,
                   items: [
                     DropdownMenuItem(value: 'mi', child: Text(AppLocalizations.of(context)!.miles)),
                     DropdownMenuItem(value: 'km', child: Text(AppLocalizations.of(context)!.kilometer)),
                   ],
                   onChanged: (newVal) {
                     setState(() {
-                      unitDist = newVal!;
+                      distUnit = newVal!;
                     });
                   },
                 ),
@@ -148,17 +148,17 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(AppLocalizations.of(context)!.unitCap, style: TextStyle(fontSize: 18)),
+                Text(AppLocalizations.of(context)!.capUnit, style: TextStyle(fontSize: 18)),
                 const SizedBox(width: 20),
                 DropdownButton<String>(
-                  value: unitCap,
+                  value: capUnit,
                   items: [
                     DropdownMenuItem(value: 'gal', child: Text(AppLocalizations.of(context)!.gallon)),
                     DropdownMenuItem(value: 'L', child: Text(AppLocalizations.of(context)!.litter)),
                   ],
                   onChanged: (newVal) {
                     setState(() {
-                      unitCap = newVal!;
+                      capUnit = newVal!;
                     });
                   },
                 ),

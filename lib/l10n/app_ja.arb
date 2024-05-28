@@ -38,10 +38,10 @@
     "editFueling": "ガソリンを編集",
     "editMaintenance": "メンテナンスを編集",
     "editRepair": "修理を編集",
-    "unitDist": "距離の単位",
+    "distUnit": "距離の単位",
     "miles": "マイル",
     "kilometer": "キロメートル",
-    "unitCap": "容量の単位",
+    "capUnit": "容量の単位",
     "gallon": "ガロン",
     "litter": "リッター",
     "currencySymbol": "通貨記号"

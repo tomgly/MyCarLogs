@@ -38,10 +38,10 @@
     "editFueling": "Edit Fueling",
     "editMaintenance": "Edit Maintenace",
     "editRepair": "Edit Repair",
-    "unitDist": "Unit of distance",
+    "distUnit": "Distance unit",
     "miles": "Miles",
     "kilometer": "Kilometer",
-    "unitCap": "Unit of capacity",
+    "capUnit": "Capacity unit",
     "gallon": "Gallon",
     "litter": "Litter",
     "currencySymbol": "Currency symbol"
