@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 import '../setting.dart';
@@ -30,14 +31,6 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  String _capitalize(text) {
-    if (isCapitalized) {
-      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
-    } else {
-      return text;
-    }
-  }
-
   @override
   void dispose() {
     descriptionController.dispose();
@@ -49,7 +42,7 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Maintenance', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.addMaintenance, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
@@ -62,27 +55,27 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
               controller: descriptionController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                labelText: 'Description',
+                labelText: AppLocalizations.of(context)!.description,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: costController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
-                labelText: 'Cost',
+                labelText: AppLocalizations.of(context)!.cost,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: dateController,
               keyboardType: TextInputType.datetime,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Date',
+                labelText: AppLocalizations.of(context)!.date,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -98,19 +91,19 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
-                  descriptionController.text = _capitalize(descriptionController.text);
                   if (descriptionController.text.isEmpty || costController.text.isEmpty ||dateController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Error, You need to fill all'))
+                      SnackBar(content: Text(AppLocalizations.of(context)!.error))
                     );
                   } else {
+                    descriptionController.text = UserPreferences.capitalize(descriptionController.text);
                     final mainte = Maintenance()
                       ..carID = widget.car.id
                       ..desc = descriptionController.text
@@ -122,17 +115,17 @@ class _MaintenanceInputPageState extends State<MaintenanceInputPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
+                child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.black)),
               ),
             ),
           ],

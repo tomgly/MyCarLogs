@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 import '../setting.dart';
@@ -44,7 +45,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
     FocusScope.of(context).unfocus();
     if (fuelController.text.isEmpty || costController.text.isEmpty || milesController.text.isEmpty || dateController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error, You need to fill all'))
+        SnackBar(content: Text(AppLocalizations.of(context)!.error))
       );
     } else {
       int preMiles = int.parse(widget.car.totalMiles);
@@ -53,8 +54,9 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
 
       if (curMiles < preMiles) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error, You need to enter higher number than Total Miles'))
+          SnackBar(content: Text(AppLocalizations.of(context)!.error_totalDist))
         );
+
       } else {
         final fueling = Fueling()
           ..carID = widget.car.id
@@ -78,7 +80,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Fueling', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.addFueling, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
@@ -91,36 +93,36 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
               controller: fuelController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
-                labelText: 'Fuel Amount',
+                labelText: AppLocalizations.of(context)!.fuelAmount,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: costController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
-                labelText: 'Cost',
+                labelText: AppLocalizations.of(context)!.cost,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: milesController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Total Miles',
+                labelText: AppLocalizations.of(context)!.totalDist,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: dateController,
               keyboardType: TextInputType.datetime,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Date',
+                labelText: AppLocalizations.of(context)!.date,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -136,7 +138,7 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               child: ElevatedButton(
@@ -144,17 +146,17 @@ class _FuelingInputPageState extends State<FuelingInputPage> {
                 onPressed: () async {
                   checkMiles();
                 },
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
+                child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.black)),
               ),
             ),
           ],

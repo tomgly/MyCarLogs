@@ -35,7 +35,7 @@ class _DetailPageState extends State<DetailPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  Future<void> loadData() async {
+  Future<void> _loadData() async {
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
@@ -51,7 +51,7 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    loadData();
+    _loadData();
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.carDetail, style: TextStyle(color: Colors.black, fontSize: 25)),

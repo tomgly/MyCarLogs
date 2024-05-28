@@ -24,7 +24,7 @@ class _ListPageState extends State<ListPage> {
     super.initState();
   }
 
-  Future<void> loadData() async {
+  Future<void> _loadData() async {
     final data = await widget.isar.cars.where().findAll();
     setState(() {
       cars = data;
@@ -34,7 +34,7 @@ class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
-    loadData();
+    _loadData();
     return Scaffold(
       appBar: AppBar(
         title: Text('MyCarLogs', style: TextStyle(color: Colors.black, fontSize: 25)),

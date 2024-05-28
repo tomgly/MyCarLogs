@@ -25,21 +25,14 @@ class _AddCarPageState extends State<AddCarPage> {
   double sBox = 0.0;
   List<String> itemList_en = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
   List<String> itemList_ja = ['白', 'グレー', '黒', 'シルバー', '青', '赤', 'そのほか'];
-
+  List<String> itemList_es = ['Blanco', 'Gris', 'Negro', 'Plata', 'Azul', 'Rojo', 'Otro'];
+  List<String> itemList_pt = ['Branco', 'Cinza', 'Preto', 'Prata', 'Azul', 'Vermelho', 'Outro'];
 
   @override
   void initState() {
     super.initState();
     isCapitalized = UserPreferences.getCapitalize();
     themeColor = UserPreferences.getThemeColor();
-  }
-
-  String _capitalize(text) {
-    if (isCapitalized) {
-      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
-    } else {
-      return text;
-    }
   }
 
   @override
@@ -57,6 +50,10 @@ class _AddCarPageState extends State<AddCarPage> {
       return itemList_en;
     } else if (langCode == 'ja') {
       return itemList_ja;
+    } else if (langCode == 'es') {
+      return itemList_es;
+    } else if (langCode == 'pt') {
+      return itemList_pt;
     } else {
       return itemList_en;
     }
@@ -75,7 +72,7 @@ class _AddCarPageState extends State<AddCarPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: nameController,
               keyboardType: TextInputType.name,
@@ -84,7 +81,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             DropdownMenu(
               width: 250,
               hintText: AppLocalizations.of(context)!.color,
@@ -100,7 +97,8 @@ class _AddCarPageState extends State<AddCarPage> {
               onSelected: (newVal) {
                 setState(() {
                   colorController.text = newVal.toString();
-                  if (colorController.text == 'Other' || colorController.text == 'そのほか') {
+                  if (colorController.text == 'Other' || colorController.text == 'そのほか' ||
+                      colorController.text == 'Otro' || colorController.text == 'Outro') {
                     menuVisible = true;
                     colorController.text = '';
                     sBox = 8;
@@ -120,7 +118,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: milesController,
               keyboardType: TextInputType.number,
@@ -129,7 +127,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: yearController,
               keyboardType: TextInputType.datetime,
@@ -166,19 +164,23 @@ class _AddCarPageState extends State<AddCarPage> {
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
-                  nameController.text = _capitalize(nameController.text);
-                  if (nameController.text.isEmpty || colorController.text.isEmpty || milesController.text.isEmpty || yearController.text.isEmpty) {
+                  if (nameController.text.isEmpty || nameController.text.isEmpty || milesController.text.isEmpty || yearController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppLocalizations.of(context)!.error),)
+                      SnackBar(content: Text(AppLocalizations.of(context)!.error))
+                    );
+                  } else if (int.tryParse(milesController.text) == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(AppLocalizations.of(context)!.errorNum))
                     );
                   } else {
+                    nameController.text = UserPreferences.capitalize(nameController.text);
                     final car = Car()
                       ..name = nameController.text
                       ..color = colorController.text
@@ -194,7 +196,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               width: double.infinity,
               child: TextButton(

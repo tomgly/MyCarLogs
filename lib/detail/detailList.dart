@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'detailEdit.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -31,7 +32,7 @@ class _DetailListPageState extends State<DetailListPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  Future<void> loadData() async {
+  Future<void> _loadData() async {
     final carData = await widget.isar.cars.get(car.id);
     final fuelingData = await widget.isar.fuelings.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
     final mainteData = await widget.isar.maintenances.filter().carIDEqualTo(car.id).sortByDateDesc().findAll();
@@ -45,17 +46,17 @@ class _DetailListPageState extends State<DetailListPage> {
     });
   }
 
-  mainTitle() {
+  _mainTitle() {
     if (widget.type == 0) {
-      return Text('Fueling Logs (' + fuelings.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));;
+      return Text(AppLocalizations.of(context)!.fuelingLogs + ' (' + fuelings.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));;
     } else if (widget.type == 1) {
-      return Text('Maintenance Logs (' + maintes.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));
+      return Text(AppLocalizations.of(context)!.maintenanceLogs + ' (' + maintes.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));
     } else if (widget.type == 2) {
-      return Text('Repair Logs (' + repairs.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));
+      return Text(AppLocalizations.of(context)!.repairLogs + ' (' + repairs.length.toString() + ')', style: TextStyle(color: Colors.black, fontSize: 25));
     }
   }
 
-  int count() {
+  int _count() {
     if (widget.type == 0) {
       return fuelings.length;
     } else if (widget.type == 1) {
@@ -66,7 +67,7 @@ class _DetailListPageState extends State<DetailListPage> {
     return 0;
   }
 
-  delete(int index) {
+  _deleteData(int index) {
     if (widget.type == 0) {
       widget.isar.fuelings.delete(fuelings[index].id);
     } else if (widget.type == 1) {
@@ -76,30 +77,35 @@ class _DetailListPageState extends State<DetailListPage> {
     }
   }
 
-  tileTitle(int index) {
+  _tileTitle(int index) {
+    final String cost = AppLocalizations.of(context)!.cost + ': \$';
     if (widget.type == 0) {
-      return Text('Fuel: ' + (fuelings[index].fuel) + ', Cost: \$' + (fuelings[index].cost),
-          style: TextStyle(color: Colors.black));
+      return Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fuelings[index].fuel) + 'gal, ' +
+          cost + (fuelings[index].cost), style: TextStyle(color: Colors.black)
+      );
     } else if (widget.type == 1) {
-      return Text('Description: ' + (maintes[index].desc) + ', Cost: \$' + (maintes[index].cost),
-          style: TextStyle(color: Colors.black));
+      return Text(AppLocalizations.of(context)!.description + ': ' + (maintes[index].desc) + ', ' +
+          cost + (maintes[index].cost), style: TextStyle(color: Colors.black)
+      );
     } else if (widget.type == 2) {
-      return Text('Repair: ' + (repairs[index].repair) + ', Cost: \$' + (repairs[index].cost),
-          style: TextStyle(color: Colors.black));
+      return Text(AppLocalizations.of(context)!.repair + ': ' + (repairs[index].repair) + ', ' +
+          cost + (repairs[index].cost), style: TextStyle(color: Colors.black)
+      );
     }
   }
 
-  tileSubtitle(int index) {
+  _tileSubtitle(int index) {
+    final String date = AppLocalizations.of(context)!.date + ': ';
     if (widget.type == 0) {
-      return Text('Date: ' + (fuelings[index].date));
+      return Text(date + (fuelings[index].date));
     } else if (widget.type == 1) {
-      return Text('Date: ' + (maintes[index].date));
+      return Text(date + (maintes[index].date));
     } else if (widget.type == 2) {
-      return Text('Date: ' + (repairs[index].date));
+      return Text(date + (repairs[index].date));
     }
   }
 
-  tileColor() {
+  _tileColor() {
     if (widget.type == 0) {
       return Color(0xffffdad3);
     } else if (widget.type == 1) {
@@ -109,11 +115,9 @@ class _DetailListPageState extends State<DetailListPage> {
     }
   }
 
-  trailing(int index) {
+  _trailing(int index) {
     if (widget.type == 0) {
-      return Text((fuelings[index].aveFuel.toStringAsFixed(2)) + ' mpg',
-          style: TextStyle(fontSize: 15),
-    );
+      return Text((fuelings[index].aveFuel.toStringAsFixed(2)) + ' mpg', style: TextStyle(fontSize: 15));
     } else {
       return null;
     }
@@ -131,10 +135,10 @@ class _DetailListPageState extends State<DetailListPage> {
 
   @override
   Widget build(BuildContext context) {
-    loadData();
+    _loadData();
     return Scaffold(
       appBar: AppBar(
-        title: mainTitle(),
+        title: _mainTitle(),
         backgroundColor: themeColor,
       ),
       body: Column(
@@ -142,7 +146,7 @@ class _DetailListPageState extends State<DetailListPage> {
           child: Card(
             child: ListView.separated(
               physics: AlwaysScrollableScrollPhysics(),
-              itemCount: count(),
+              itemCount: _count(),
               padding: const EdgeInsets.all(15),
               separatorBuilder: (BuildContext context, int index) => const Divider(),
               itemBuilder: (BuildContext context, int index) {
@@ -167,10 +171,10 @@ class _DetailListPageState extends State<DetailListPage> {
                     SlidableAction(
                       onPressed: (_) async {
                         await widget.isar.writeTxn(() async {
-                          delete(index);
+                          _deleteData(index);
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Deleted'))
+                            SnackBar(content: Text(AppLocalizations.of(context)!.deleted))
                         );
                       },
                       backgroundColor: Colors.red.shade500,
@@ -180,10 +184,10 @@ class _DetailListPageState extends State<DetailListPage> {
                   ],
                 ),
                 child: ListTile(
-                  title: tileTitle(index),
-                  subtitle: tileSubtitle(index),
-                  tileColor: tileColor(),
-                  trailing: trailing(index),
+                  title: _tileTitle(index),
+                  subtitle: _tileSubtitle(index),
+                  tileColor: _tileColor(),
+                  trailing: _trailing(index),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
                     side: BorderSide(color: Colors.black),

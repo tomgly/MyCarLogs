@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
 import '../setting.dart';
@@ -30,14 +31,6 @@ class _RepairInputPageState extends State<RepairInputPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  String _capitalize(text) {
-    if (isCapitalized) {
-      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
-    } else {
-      return text;
-    }
-  }
-
   @override
   void dispose() {
     repairController.dispose();
@@ -49,7 +42,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Repair', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.addRepair, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
@@ -62,27 +55,27 @@ class _RepairInputPageState extends State<RepairInputPage> {
               controller: repairController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                labelText: 'Repair',
+                labelText: AppLocalizations.of(context)!.repair,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: costController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
-                labelText: 'Cost',
+                labelText: AppLocalizations.of(context)!.cost,
                 border: OutlineInputBorder()
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: dateController,
               keyboardType: TextInputType.datetime,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Date',
+                labelText: AppLocalizations.of(context)!.date,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -98,19 +91,19 @@ class _RepairInputPageState extends State<RepairInputPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
-                  repairController.text = _capitalize(repairController.text);
                   if (repairController.text.isEmpty || costController.text.isEmpty ||dateController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Error, You need to fill all'))
+                      SnackBar(content: Text(AppLocalizations.of(context)!.error))
                     );
                   } else {
+                    repairController.text = UserPreferences.capitalize(repairController.text);
                     final repair = Repair()
                       ..carID = widget.car.id
                       ..repair = repairController.text
@@ -122,17 +115,17 @@ class _RepairInputPageState extends State<RepairInputPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
+                child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Container(
               width: double.infinity,
               child: TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.black)),
               ),
             ),
           ],

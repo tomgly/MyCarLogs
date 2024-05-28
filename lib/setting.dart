@@ -23,6 +23,9 @@ class _SettingPageState extends State<SettingPage> {
   late Color themeColor;
   Color pickerColor = Colors.green;
   String lang = 'en';
+  String unitDist = 'mi';
+  String unitCap = 'gal';
+  String currencySymbol = '\$';
 
   @override
   void initState() {
@@ -92,7 +95,7 @@ class _SettingPageState extends State<SettingPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(AppLocalizations.of(context)!.themeColor, style: TextStyle(fontSize: 18)),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
                     _showPicker(context);
@@ -101,17 +104,19 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(AppLocalizations.of(context)!.lang, style: TextStyle(fontSize: 18)),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 DropdownButton<String>(
                   value: lang,
                   items: [
                     DropdownMenuItem(value: 'en', child: Text('English')),
                     DropdownMenuItem(value: 'ja', child: Text('日本語')),
+                    DropdownMenuItem(value: 'es', child: Text('Español')),
+                    DropdownMenuItem(value: 'pt', child: Text('Português')),
                   ],
                   onChanged: (newVal) {
                     _changeLang(context, newVal!);
@@ -119,7 +124,67 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.unitDist, style: TextStyle(fontSize: 18)),
+                const SizedBox(width: 20),
+                DropdownButton<String>(
+                  value: unitDist,
+                  items: [
+                    DropdownMenuItem(value: 'mi', child: Text(AppLocalizations.of(context)!.miles)),
+                    DropdownMenuItem(value: 'km', child: Text(AppLocalizations.of(context)!.kilometer)),
+                  ],
+                  onChanged: (newVal) {
+                    setState(() {
+                      unitDist = newVal!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.unitCap, style: TextStyle(fontSize: 18)),
+                const SizedBox(width: 20),
+                DropdownButton<String>(
+                  value: unitCap,
+                  items: [
+                    DropdownMenuItem(value: 'gal', child: Text(AppLocalizations.of(context)!.gallon)),
+                    DropdownMenuItem(value: 'L', child: Text(AppLocalizations.of(context)!.litter)),
+                  ],
+                  onChanged: (newVal) {
+                    setState(() {
+                      unitCap = newVal!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(AppLocalizations.of(context)!.currencySymbol, style: TextStyle(fontSize: 18)),
+                const SizedBox(width: 20),
+                DropdownButton<String>(
+                  value: currencySymbol,
+                  items: [
+                    DropdownMenuItem(value: '\$', child: Text('\$')),
+                    DropdownMenuItem(value: '\¥', child: Text('\¥')),
+                  ],
+                  onChanged: (newVal) {
+                    setState(() {
+                      currencySymbol = newVal!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             SwitchListTile.adaptive(
               title: Text(AppLocalizations.of(context)!.capitalize, style: TextStyle(fontSize: 18)),
               value: isCapitalized,
@@ -131,7 +196,7 @@ class _SettingPageState extends State<SettingPage> {
                 await prefs.setBool('isCapitalized', isCapitalized);
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextButton(
               onPressed: () {
                 showDialog(context: context, builder: (context) {
@@ -152,7 +217,7 @@ class _SettingPageState extends State<SettingPage> {
                           );
                         },
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       GestureDetector(
                         child: Text(AppLocalizations.of(context)!.cancel),
                         onTap: () {
@@ -166,7 +231,7 @@ class _SettingPageState extends State<SettingPage> {
               child: Text(AppLocalizations.of(context)!.delete_all, style: TextStyle(color: Colors.red, fontSize: 18),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(AppLocalizations.of(context)!.version + ': ' + version, style: TextStyle(fontSize: 15))
           ]
         ),
@@ -198,4 +263,16 @@ class UserPreferences {
 
   static String getLangCode() =>
     _prefs.getString('langCode') ?? 'en';
+
+  static String capitalize(text) {
+    if (getCapitalize()) {
+      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+    } else {
+      return text;
+    }
+  }
+
+  static Future setUnitDist(String value) async =>
+    await _prefs.setString('unitDist', value);
+
 }
