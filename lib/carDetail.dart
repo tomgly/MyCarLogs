@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'editCar.dart';
@@ -53,7 +54,7 @@ class _DetailPageState extends State<DetailPage> {
     loadData();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Car Details', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.carDetail, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
         actions: <Widget>[
           IconButton(
@@ -73,29 +74,29 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Car Information
           Text(
-            'Name: ' + (car.name),
+            AppLocalizations.of(context)!.name + ': ' + (car.name),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'Color: ' + (car.color),
+              AppLocalizations.of(context)!.color + ': ' + (car.color),
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 8),
           Text(
-            'Total Miles: ' + (NumberFormat('#,###').format(int.parse(car.totalMiles))) + ' mi',
+              AppLocalizations.of(context)!.totalDist + ': ' + (NumberFormat('#,###').format(int.parse(car.totalMiles))) + ' mi',
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 8),
           Text(
-            'Year: ' + (car.year),
+              AppLocalizations.of(context)!.year + ': ' + (car.year),
             style: TextStyle(fontSize: 18),
           ),
           const SizedBox(height: 15),
 
           // Fueling Logs
           Text(
-            'Fueling Logs (' + fuelings.length.toString() + '):',
+              AppLocalizations.of(context)!.fuelingLogs + ' (' + fuelings.length.toString() + '):',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ListView.builder(
@@ -108,9 +109,10 @@ class _DetailPageState extends State<DetailPage> {
               return Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text('Fuel Amount: ' + (fueling.fuel) + 'gal, Cost: \$' + (fueling.cost),
-                    style: TextStyle(color: Colors.black)),
-                  subtitle: Text('Date: ' + (fueling.date)),
+                  title: Text(AppLocalizations.of(context)!.fuelAmount + ': ' + (fueling.fuel) + 'gal, ' +
+                      AppLocalizations.of(context)!.cost + ': \$' + (fueling.cost), style: TextStyle(color: Colors.black)
+                  ),
+                  subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (fueling.date)),
                   trailing: Text((fueling.aveFuel.toStringAsFixed(2)) + ' mpg',
                   style: TextStyle(fontSize: 15)),
                   tileColor: Color(0xffffdad3),
@@ -139,7 +141,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 );
               },
-              child: Text('Add Fueling', style: TextStyle(color: Colors.black)),
+              child: Text(AppLocalizations.of(context)!.addFueling, style: TextStyle(color: Colors.black)),
               style: ElevatedButton.styleFrom(
                 side: BorderSide(color: Colors.black),
                 backgroundColor: Color(0xffffdad3),
@@ -152,7 +154,7 @@ class _DetailPageState extends State<DetailPage> {
           const SizedBox(height: 10),
 
           // Maintenance Logs
-          Text('Maintenance Logs (' + maintes.length.toString() + '):',
+          Text(AppLocalizations.of(context)!.maintenanceLogs + ' (' + maintes.length.toString() + '):',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ListView.builder(
@@ -165,9 +167,10 @@ class _DetailPageState extends State<DetailPage> {
               return Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text('Description: ' + (mainte.desc) + ', Cost: \$' + (mainte.cost),
-                      style: TextStyle(color: Colors.black)),
-                  subtitle: Text('Date: ' + (mainte.date)),
+                  title: Text(AppLocalizations.of(context)!.description + ': ' + (mainte.desc) + ', ' +
+                      AppLocalizations.of(context)!.cost + ': \$' + (mainte.cost), style: TextStyle(color: Colors.black)
+                  ),
+                  subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (mainte.date)),
                   tileColor: Color(0xffd3def1),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -194,7 +197,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 );
               },
-              child: Text('Add Maintenance', style: TextStyle(color: Colors.black)),
+              child: Text(AppLocalizations.of(context)!.addMaintenance, style: TextStyle(color: Colors.black)),
               style: ElevatedButton.styleFrom(
                 side: BorderSide(color: Colors.black),
                 backgroundColor: Color(0xffd3def1),
@@ -207,7 +210,7 @@ class _DetailPageState extends State<DetailPage> {
           const SizedBox(height: 10),
 
           // Repair Logs
-          Text('Repair Logs (' + repairs.length.toString() + '):',
+          Text(AppLocalizations.of(context)!.repairLogs + ' (' + repairs.length.toString() + '):',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ListView.builder(
@@ -220,9 +223,10 @@ class _DetailPageState extends State<DetailPage> {
               return Padding(
                 padding: const EdgeInsets.all(5),
                 child: ListTile(
-                  title: Text('Repair: ' + (repair.repair) + ', Cost: \$' + (repair.cost),
-                    style: TextStyle(color: Colors.black)),
-                  subtitle: Text('Date: ' + (repair.date)),
+                  title: Text(AppLocalizations.of(context)!.repair + ': ' + (repair.repair) + ', ' +
+                      AppLocalizations.of(context)!.cost + ': \$' + (repair.cost), style: TextStyle(color: Colors.black)
+                  ),
+                  subtitle: Text(AppLocalizations.of(context)!.date + ': ' + (repair.date)),
                   tileColor: Color(0xfffff1ab),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -249,7 +253,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 );
               },
-              child: Text('Add Repair', style: TextStyle(color: Colors.black)),
+              child: Text(AppLocalizations.of(context)!.addRepair, style: TextStyle(color: Colors.black)),
               style: ElevatedButton.styleFrom(
                 side: BorderSide(color: Colors.black),
                 backgroundColor: Color(0xfffff1ab),

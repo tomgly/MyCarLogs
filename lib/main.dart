@@ -23,6 +23,10 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   final Isar isar;
+  static void setLocale(BuildContext context, Locale newLocale) {
+    _MyAppState state = context.findAncestorStateOfType<_MyAppState>()!;
+    state.setLocale(newLocale);
+  }
 
   MyApp({required this.isar});
 
@@ -31,44 +35,40 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Locale? _locale;
+  Locale? locale;
 
   @override
   void initState() {
     super.initState();
-    _fetchLocale().then((locale) {
-      setState(() {
-        _locale = locale;
-      });
+    _loadLang();
+  }
+
+  void setLocale(Locale newLocale) {
+    setState(() {
+      locale = newLocale;
     });
   }
 
-  Future<Locale> _fetchLocale() async {
-    var languageCode = UserPreferences.getLanguage();
-    return Locale(languageCode ?? 'en');
-  }
-
-  void _changeLanguage(String languageCode) async {
-    await UserPreferences.setLanguage(languageCode);
-    var locale = await _fetchLocale();
+  void _loadLang() async {
+    String savedLangCode = UserPreferences.getLangCode();
     setState(() {
-      _locale = locale;
+      locale = Locale(savedLangCode);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_locale == null) {
+    if (locale == null) {
       return CircularProgressIndicator();
     } else {
       return MaterialApp(
-        localizationsDelegates: [
+        localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
+        supportedLocales: const [
           const Locale('en'),
           const Locale('ja'),
         ],
@@ -76,12 +76,12 @@ class _MyAppState extends State<MyApp> {
         title: 'MyCarLogs',
         theme: ThemeData(
           brightness: Brightness.light,
-          fontFamily: 'CarterOne',
+          fontFamily: 'PottaOne',
           primarySwatch: Colors.green,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: ListPage(isar: widget.isar, onLanguageChanged: _changeLanguage,
-        ),
+        locale: locale,
+        home: ListPage(isar: widget.isar),
       );
     }
   }

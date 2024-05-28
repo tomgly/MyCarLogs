@@ -113,3 +113,8 @@ flutter:
         - asset: assets/fonts/CarterOne-Regular.ttf
           style: normal
           weight: 500
+    - family: PottaOne
+      fonts:
+        - asset: assets/fonts/PottaOne-Regular.ttf
+          style: normal
+          weight: 500

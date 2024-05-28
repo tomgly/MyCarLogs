@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'collections/car.dart';
 import 'setting.dart';
 
@@ -22,7 +23,9 @@ class _AddCarPageState extends State<AddCarPage> {
   late Color themeColor;
   bool menuVisible = false;
   double sBox = 0.0;
-  List<String> itemList = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
+  List<String> itemList_en = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
+  List<String> itemList_ja = ['白', 'グレー', '黒', 'シルバー', '青', '赤', 'そのほか'];
+
 
   @override
   void initState() {
@@ -31,7 +34,7 @@ class _AddCarPageState extends State<AddCarPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  String capitalize(text) {
+  String _capitalize(text) {
     if (isCapitalized) {
       return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
     } else {
@@ -48,11 +51,22 @@ class _AddCarPageState extends State<AddCarPage> {
     super.dispose();
   }
 
+  List<String> _setItemList() {
+    final langCode = UserPreferences.getLangCode();
+    if (langCode == 'en') {
+      return itemList_en;
+    } else if (langCode == 'ja') {
+      return itemList_ja;
+    } else {
+      return itemList_en;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Your Car', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.addCar, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
@@ -66,20 +80,17 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                labelText: 'Car Name',
+                labelText: AppLocalizations.of(context)!.name,
                 border: OutlineInputBorder()
               ),
-              onChanged: (newVal) {
-                nameController.text = capitalize(newVal);
-              },
             ),
             SizedBox(height: 8),
             DropdownMenu(
               width: 250,
-              hintText: 'Body Color',
+              hintText: AppLocalizations.of(context)!.color,
               enableFilter: false,
               requestFocusOnTap: true,
-              dropdownMenuEntries: itemList
+              dropdownMenuEntries: _setItemList()
                   .map(
                     (item) => DropdownMenuEntry(
                   value: item,
@@ -89,7 +100,7 @@ class _AddCarPageState extends State<AddCarPage> {
               onSelected: (newVal) {
                 setState(() {
                   colorController.text = newVal.toString();
-                  if (colorController.text == 'Other') {
+                  if (colorController.text == 'Other' || colorController.text == 'そのほか') {
                     menuVisible = true;
                     colorController.text = '';
                     sBox = 8;
@@ -104,7 +115,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 controller: colorController,
                 keyboardType: TextInputType.name,
                 decoration: InputDecoration(
-                  labelText: 'Body Color',
+                  labelText: AppLocalizations.of(context)!.color,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -114,7 +125,7 @@ class _AddCarPageState extends State<AddCarPage> {
               controller: milesController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                labelText: 'Total Miles',
+                labelText: AppLocalizations.of(context)!.totalDist,
                 border: OutlineInputBorder()
               ),
             ),
@@ -125,7 +136,7 @@ class _AddCarPageState extends State<AddCarPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Year',
+                labelText: AppLocalizations.of(context)!.year,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -133,7 +144,7 @@ class _AddCarPageState extends State<AddCarPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Select Year'),
+                          title: Text(AppLocalizations.of(context)!.selectYear),
                           content: Container(
                             width: 300,
                             height: 300,
@@ -162,9 +173,10 @@ class _AddCarPageState extends State<AddCarPage> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
+                  nameController.text = _capitalize(nameController.text);
                   if (nameController.text.isEmpty || colorController.text.isEmpty || milesController.text.isEmpty || yearController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Error, You need to fill all'))
+                        SnackBar(content: Text(AppLocalizations.of(context)!.error),)
                     );
                   } else {
                     final car = Car()
@@ -179,7 +191,7 @@ class _AddCarPageState extends State<AddCarPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
+                child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
             SizedBox(height: 8),
@@ -189,7 +201,7 @@ class _AddCarPageState extends State<AddCarPage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel', style: TextStyle(color: Colors.black)),
+                child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.black)),
               ),
             ),
           ],

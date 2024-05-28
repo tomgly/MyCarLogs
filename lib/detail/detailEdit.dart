@@ -175,7 +175,7 @@ class _DetailEditPageState extends State<DetailEditPage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel'),
+                child: Text('Cancel', style: TextStyle(color: Colors.black)),
               ),
             )
           ],

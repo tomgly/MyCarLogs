@@ -10,27 +10,27 @@ import '../collections/input.dart';
 
 class SettingPage extends StatefulWidget {
   final Isar isar;
-  final ValueChanged<String> onLanguageChanged;
 
-  SettingPage({required this.isar, required this.onLanguageChanged});
+  SettingPage({required this.isar});
 
   @override
   _SettingPageState createState() => _SettingPageState();
 }
 
 class _SettingPageState extends State<SettingPage> {
-  late bool _isCapitalized;
-  late String _version;
-  late Color _themeColor;
-  Color _pickerColor = Colors.green;
+  late bool isCapitalized;
+  late String version;
+  late Color themeColor;
+  Color pickerColor = Colors.green;
+  String lang = 'en';
 
   @override
   void initState() {
     super.initState();
-    _isCapitalized = UserPreferences.getCapitalize();
-    _themeColor = UserPreferences.getThemeColor();
-    _version = UserPreferences.getVersion();
-
+    isCapitalized = UserPreferences.getCapitalize();
+    themeColor = UserPreferences.getThemeColor();
+    version = UserPreferences.getVersion();
+    lang = UserPreferences.getLangCode();
   }
 
   void _showPicker(BuildContext context) {
@@ -38,24 +38,24 @@ class _SettingPageState extends State<SettingPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a theme color'),
+          title: Text(AppLocalizations.of(context)!.pick_themeColor),
           content: SingleChildScrollView(
             child: BlockPicker(
-              pickerColor: _themeColor,
+              pickerColor: themeColor,
               onColorChanged: (newVal) {
-                _pickerColor = newVal;
+                pickerColor = newVal;
               },
             ),
           ),
           actions: <Widget>[
             GestureDetector(
-              child: Text('Got it'),
+              child: Text(AppLocalizations.of(context)!.submit),
               onTap: () async {
                 setState(() {
-                  _themeColor = _pickerColor;
+                  themeColor = pickerColor;
                 });
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setInt('themeColor', _pickerColor.value);
+                await prefs.setInt('themeColor', pickerColor.value);
                 Navigator.of(context).pop();
               },
             )
@@ -65,12 +65,23 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
+  void _changeLang(BuildContext context, String langCode) async {
+    Locale newLocale = Locale(langCode);
+
+    await UserPreferences.setLangCode(langCode);
+    MyApp.setLocale(context, newLocale);
+
+    setState(() {
+      lang = langCode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Setting', style: TextStyle(color: Colors.black, fontSize: 25)),
-        backgroundColor: _themeColor,
+        title: Text(AppLocalizations.of(context)!.setting, style: TextStyle(color: Colors.black, fontSize: 25)),
+        backgroundColor: themeColor,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(64),
@@ -80,13 +91,13 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Theme Color', style: TextStyle(fontSize: 18)),
+                Text(AppLocalizations.of(context)!.themeColor, style: TextStyle(fontSize: 18)),
                 SizedBox(width: 20),
                 ElevatedButton(
                   onPressed: () {
                     _showPicker(context);
                   },
-                  child: Icon(Icons.color_lens, color: _themeColor),
+                  child: Icon(Icons.color_lens, color: themeColor),
                 ),
               ],
             ),
@@ -97,27 +108,27 @@ class _SettingPageState extends State<SettingPage> {
                 Text(AppLocalizations.of(context)!.lang, style: TextStyle(fontSize: 18)),
                 SizedBox(width: 20),
                 DropdownButton<String>(
-                  value: UserPreferences.getLanguage(),
+                  value: lang,
                   items: [
                     DropdownMenuItem(value: 'en', child: Text('English')),
                     DropdownMenuItem(value: 'ja', child: Text('日本語')),
                   ],
-                  onChanged: (value) {
-                    widget.onLanguageChanged(value!);
+                  onChanged: (newVal) {
+                    _changeLang(context, newVal!);
                   },
                 ),
               ],
             ),
             SizedBox(height: 10),
             SwitchListTile.adaptive(
-              title: Text(_isCapitalized ? 'Capitalize the first letter' : 'capitalize the first letter', style: TextStyle(fontSize: 18)),
-              value: _isCapitalized,
+              title: Text(AppLocalizations.of(context)!.capitalize, style: TextStyle(fontSize: 18)),
+              value: isCapitalized,
               onChanged: (newVal) async {
                 setState(() {
-                  _isCapitalized = newVal;
+                  isCapitalized = newVal;
                 });
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('isCapitalized', _isCapitalized);
+                await prefs.setBool('isCapitalized', isCapitalized);
               },
             ),
             SizedBox(height: 10),
@@ -125,10 +136,10 @@ class _SettingPageState extends State<SettingPage> {
               onPressed: () {
                 showDialog(context: context, builder: (context) {
                   return AlertDialog(
-                    title: Text('Are you sure to delete ALL CARS?'),
+                    title: Text(AppLocalizations.of(context)!.delete_all_alert),
                     actions: <Widget>[
                       GestureDetector(
-                        child: Text('DELETE', style: TextStyle(color: Colors.red)),
+                        child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
                         onTap: () async {
                           await widget.isar.writeTxn(() async {
                             await widget.isar.cars.where().deleteAll();
@@ -141,8 +152,9 @@ class _SettingPageState extends State<SettingPage> {
                           );
                         },
                       ),
+                      SizedBox(width: 8),
                       GestureDetector(
-                        child: Text('Cancel'),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                         onTap: () {
                           Navigator.of(context).pop();
                         },
@@ -151,11 +163,11 @@ class _SettingPageState extends State<SettingPage> {
                   );
                 });
               },
-              child: Text('Delete All Cars', style: TextStyle(color: Colors.red, fontSize: 18),
+              child: Text(AppLocalizations.of(context)!.delete_all, style: TextStyle(color: Colors.red, fontSize: 18),
               ),
             ),
             SizedBox(height: 8),
-            Text('Version: ' + _version, style: TextStyle(fontSize: 15))
+            Text(AppLocalizations.of(context)!.version + ': ' + version, style: TextStyle(fontSize: 15))
           ]
         ),
       ),
@@ -166,11 +178,10 @@ class _SettingPageState extends State<SettingPage> {
 class UserPreferences {
   static late SharedPreferences _prefs;
   static late PackageInfo _packageInfo;
-  static const _keyLanguage = 'language';
 
   static Future init() async => (
     _prefs = await SharedPreferences.getInstance(),
-    _packageInfo = await PackageInfo.fromPlatform()
+    _packageInfo = await PackageInfo.fromPlatform(),
   );
 
   static bool getCapitalize() =>
@@ -182,9 +193,9 @@ class UserPreferences {
   static String getVersion() =>
     _packageInfo.version;
 
-  static Future setLanguage(String languageCode) async =>
-    await _prefs.setString(_keyLanguage, languageCode);
+  static Future setLangCode(String langCode) async =>
+      await _prefs.setString('langCode', langCode);
 
-  static String? getLanguage() =>
-    _prefs.getString(_keyLanguage);
+  static String getLangCode() =>
+    _prefs.getString('langCode') ?? 'en';
 }

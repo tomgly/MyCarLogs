@@ -30,7 +30,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
     themeColor = UserPreferences.getThemeColor();
   }
 
-  String capitalize(text) {
+  String _capitalize(text) {
     if (isCapitalized) {
       return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
     } else {
@@ -65,9 +65,6 @@ class _RepairInputPageState extends State<RepairInputPage> {
                 labelText: 'Repair',
                 border: OutlineInputBorder()
               ),
-              onChanged: (newVal) {
-                repairController.text = capitalize(newVal);
-              },
             ),
             SizedBox(height: 20),
             TextField(
@@ -108,6 +105,7 @@ class _RepairInputPageState extends State<RepairInputPage> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
+                  repairController.text = _capitalize(repairController.text);
                   if (repairController.text.isEmpty || costController.text.isEmpty ||dateController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Error, You need to fill all'))

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'collections/car.dart';
 import 'collections/input.dart';
 import 'main.dart';
@@ -22,6 +23,7 @@ class _EditPageState extends State<EditPage> {
   late TextEditingController colorController;
   late TextEditingController milesController;
   late TextEditingController yearController;
+  late bool isCapitalized;
   late Color themeColor;
 
   @override
@@ -32,14 +34,23 @@ class _EditPageState extends State<EditPage> {
     colorController = TextEditingController(text: car.color);
     milesController = TextEditingController(text: car.totalMiles);
     yearController = TextEditingController(text: car.year);
+    isCapitalized = UserPreferences.getCapitalize();
     themeColor = UserPreferences.getThemeColor();
+  }
+
+  String _capitalize(text) {
+    if (isCapitalized) {
+      return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
+    } else {
+      return text;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Your Car', style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.editCar, style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
       resizeToAvoidBottomInset: false,
@@ -53,19 +64,16 @@ class _EditPageState extends State<EditPage> {
               controller: nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                labelText: 'Car Name',
+                labelText: AppLocalizations.of(context)!.name,
                 border: OutlineInputBorder()
               ),
-              onChanged: (newVal) {
-                nameController.text = newVal.capitalize();
-              },
             ),
             const SizedBox(height: 8),
             TextField(
               controller: colorController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                labelText: 'Body Color',
+                labelText: AppLocalizations.of(context)!.color,
                 border: OutlineInputBorder()
               ),
             ),
@@ -74,7 +82,7 @@ class _EditPageState extends State<EditPage> {
               controller: milesController,
               keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
               decoration: InputDecoration(
-                labelText: 'Total Miles',
+                labelText: AppLocalizations.of(context)!.totalDist,
                 border: OutlineInputBorder()
               ),
             ),
@@ -85,7 +93,7 @@ class _EditPageState extends State<EditPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Year',
+                labelText: AppLocalizations.of(context)!.year,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () async {
@@ -93,7 +101,7 @@ class _EditPageState extends State<EditPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Select Year'),
+                          title: Text(AppLocalizations.of(context)!.selectYear),
                           content: Container(
                             width: 300,
                             height: 300,
@@ -122,9 +130,10 @@ class _EditPageState extends State<EditPage> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 onPressed: () async {
                   FocusScope.of(context).unfocus();
+                  nameController.text = _capitalize(nameController.text);
                   if (nameController.text.isEmpty || colorController.text.isEmpty || milesController.text.isEmpty || yearController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Error, You need to fill all'))
+                      SnackBar(content: Text(AppLocalizations.of(context)!.error))
                     );
                   } else {
                     car
@@ -138,7 +147,7 @@ class _EditPageState extends State<EditPage> {
                     Navigator.of(context).pop();
                   }
                 },
-                child: Text('Submit', style: TextStyle(color: Colors.white)),
+                child: Text(AppLocalizations.of(context)!.submit, style: TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 8),
@@ -148,7 +157,7 @@ class _EditPageState extends State<EditPage> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.black)),
               ),
             ),
             Container(
@@ -157,10 +166,10 @@ class _EditPageState extends State<EditPage> {
                 onPressed: () {
                   showDialog(context: context, builder: (context) {
                     return AlertDialog(
-                      title: Text('Are you sure to delete this car?'),
+                      title: Text(AppLocalizations.of(context)!.delete_this_alert),
                       actions: <Widget>[
                         GestureDetector(
-                          child: Text('DELETE', style: TextStyle(color: Colors.red)),
+                          child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
                           onTap: () async {
                             await widget.isar.writeTxn(() async {
                               await widget.isar.cars.delete(car.id);
@@ -174,8 +183,9 @@ class _EditPageState extends State<EditPage> {
                             );
                           },
                         ),
+                        SizedBox(width: 8),
                         GestureDetector(
-                          child: Text('Cancel'),
+                          child: Text(AppLocalizations.of(context)!.cancel),
                           onTap: () {
                             Navigator.of(context).pop();
                           },
@@ -184,7 +194,7 @@ class _EditPageState extends State<EditPage> {
                     );
                   });
                 },
-                child: Text('Delete This Car', style: TextStyle(color: Colors.red),
+                child: Text(AppLocalizations.of(context)!.delete_this, style: TextStyle(color: Colors.red),
                 ),
               )
             )
@@ -192,11 +202,5 @@ class _EditPageState extends State<EditPage> {
         ),
       ),
     );
-  }
-}
-
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
   }
 }

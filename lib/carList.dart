@@ -8,9 +8,8 @@ import 'carDetail.dart';
 
 class ListPage extends StatefulWidget {
   final Isar isar;
-  final ValueChanged<String> onLanguageChanged;
 
-  ListPage({required this.isar, required this.onLanguageChanged});
+  ListPage({required this.isar});
 
   @override
   _ListPageState createState() => _ListPageState();
@@ -45,7 +44,7 @@ class _ListPageState extends State<ListPage> {
             onPressed: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) {
-                  return SettingPage(isar: widget.isar, onLanguageChanged: widget.onLanguageChanged);
+                  return SettingPage(isar: widget.isar);
                 }),
               );
             },
