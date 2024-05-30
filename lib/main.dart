@@ -71,12 +71,14 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: const [
           const Locale('en'),
           const Locale('ja'),
+          const Locale('es'),
+          const Locale('pt'),
         ],
         debugShowCheckedModeBanner: false,
         title: 'MyCarLogs',
         theme: ThemeData(
           brightness: Brightness.light,
-          fontFamily: 'PottaOne',
+          fontFamily: 'YuseiMagic',
           primarySwatch: Colors.green,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

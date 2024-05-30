@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:settings_ui/settings_ui.dart';
 import 'main.dart';
 import '../collections/car.dart';
 import '../collections/input.dart';
@@ -22,10 +23,14 @@ class _SettingPageState extends State<SettingPage> {
   late String version;
   late Color themeColor;
   Color pickerColor = Colors.green;
-  String lang = 'en';
-  String distUnit = 'mi';
-  String capUnit = 'gal';
-  String currencySymbol = '\$';
+  int returnNum = 0;
+  List<String> langList = ['English', '日本語', 'Español', 'Português'];
+  List<String> langCode = ['en', 'ja', 'es', 'pt'];
+  bool isMiles = true;
+  List<String> distUnit = ['mi', 'km'];
+  bool isGallon = true;
+  List<String> capUnit = ['gal', 'L'];
+  List<String> currencySymbol = ['\$', '\¥'];
 
   @override
   void initState() {
@@ -33,42 +38,12 @@ class _SettingPageState extends State<SettingPage> {
     isCapitalized = UserPreferences.getCapitalize();
     themeColor = UserPreferences.getThemeColor();
     version = UserPreferences.getVersion();
-    lang = UserPreferences.getLangCode();
-    distUnit = UserPreferences.getDistUnit();
-    capUnit = UserPreferences.getCapUnit();
-    currencySymbol = UserPreferences.getCurrencySymbol();
-  }
-
-  void _showPicker(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.pick_themeColor),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: themeColor,
-              onColorChanged: (newVal) {
-                pickerColor = newVal;
-              },
-            ),
-          ),
-          actions: <Widget>[
-            GestureDetector(
-              child: Text(AppLocalizations.of(context)!.submit),
-              onTap: () async {
-                setState(() {
-                  themeColor = pickerColor;
-                });
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setInt('themeColor', pickerColor.value);
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      },
-    );
+    if (UserPreferences.getDistUnit() != 'mi') {
+      isMiles = false;
+    }
+    if (UserPreferences.getCapUnit() != 'gal') {
+      isGallon = false;
+    }
   }
 
   void _changeLang(BuildContext context, String langCode) async {
@@ -76,171 +51,186 @@ class _SettingPageState extends State<SettingPage> {
 
     await UserPreferences.setLangCode(langCode);
     MyApp.setLocale(context, newLocale);
-
-    setState(() {
-      lang = langCode;
-    });
   }
+
+  _showDialog(List<String> list) async => showDialog(context: context, builder: (context) =>
+    AlertDialog(
+      title: Text(AppLocalizations.of(context)!.lang),
+      content: Container(
+        width: 100,
+        height: 240,
+        child: ListView.builder(
+          physics: AlwaysScrollableScrollPhysics(),
+          itemCount: list.length,
+          itemBuilder: (BuildContext contest, int index) => ListTile (
+            title: Text(list[index]),
+            onTap: () {
+              returnNum = index;
+              Navigator.of(context).pop();
+            },
+          )
+        ),
+      )
+    )
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.setting, style: TextStyle(color: Colors.black, fontSize: 25)),
+        title: Text(AppLocalizations.of(context)!.setting,
+          style: TextStyle(color: Colors.black, fontSize: 25)),
         backgroundColor: themeColor,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(64),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.themeColor, style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    _showPicker(context);
-                  },
-                  child: Icon(Icons.color_lens, color: themeColor),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.lang, style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 20),
-                DropdownButton<String>(
-                  value: lang,
-                  items: [
-                    DropdownMenuItem(value: 'en', child: Text('English')),
-                    DropdownMenuItem(value: 'ja', child: Text('日本語')),
-                    DropdownMenuItem(value: 'es', child: Text('Español')),
-                    DropdownMenuItem(value: 'pt', child: Text('Português')),
-                  ],
-                  onChanged: (newVal) {
-                    _changeLang(context, newVal!);
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.distUnit, style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 20),
-                DropdownButton<String>(
-                  value: distUnit,
-                  items: [
-                    DropdownMenuItem(value: 'mi', child: Text(AppLocalizations.of(context)!.miles)),
-                    DropdownMenuItem(value: 'km', child: Text(AppLocalizations.of(context)!.kilometer)),
-                  ],
-                  onChanged: (newVal) async {
-                    await UserPreferences.setDistUnit(newVal!);
-                    setState(() {
-                      distUnit = newVal;
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.capUnit, style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 20),
-                DropdownButton<String>(
-                  value: capUnit,
-                  items: [
-                    DropdownMenuItem(value: 'gal', child: Text(AppLocalizations.of(context)!.gallon)),
-                    DropdownMenuItem(value: 'L', child: Text(AppLocalizations.of(context)!.litter)),
-                  ],
-                  onChanged: (newVal) async {
-                    await UserPreferences.setCapUnit(newVal!);
-                    setState(() {
-                      capUnit = newVal;
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(AppLocalizations.of(context)!.currencySymbol, style: TextStyle(fontSize: 18)),
-                const SizedBox(width: 20),
-                DropdownButton<String>(
-                  value: currencySymbol,
-                  items: [
-                    DropdownMenuItem(value: '\$', child: Text('\$')),
-                    DropdownMenuItem(value: '\¥', child: Text('\¥')),
-                  ],
-                  onChanged: (newVal) async {
-                    await UserPreferences.setCurrencySymbol(newVal!);
-                    setState(() {
-                      currencySymbol = newVal;
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            SwitchListTile.adaptive(
-              title: Text(AppLocalizations.of(context)!.capitalize, style: TextStyle(fontSize: 18)),
-              value: isCapitalized,
-              onChanged: (newVal) async {
-                setState(() {
-                  isCapitalized = newVal;
-                });
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('isCapitalized', isCapitalized);
-              },
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                showDialog(context: context, builder: (context) {
-                  return AlertDialog(
-                    title: Text(AppLocalizations.of(context)!.delete_all_alert),
-                    actions: <Widget>[
-                      GestureDetector(
-                        child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
-                        onTap: () async {
-                          await widget.isar.writeTxn(() async {
-                            await widget.isar.cars.where().deleteAll();
-                            await widget.isar.fuelings.where().deleteAll();
-                            await widget.isar.maintenances.where().deleteAll();
-                            await widget.isar.repairs.where().deleteAll();
-                          });
-                          Navigator.pushAndRemoveUntil( context,
-                              MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)), (_) => false
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        child: Text(AppLocalizations.of(context)!.cancel),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                });
-              },
-              child: Text(AppLocalizations.of(context)!.delete_all, style: TextStyle(color: Colors.red, fontSize: 18),
+      body: SettingsList(
+        sections: [
+          SettingsSection(
+            title: Text('Common'),
+            tiles: <SettingsTile>[
+              SettingsTile.navigation(
+                leading: const Icon(Icons.language),
+                title: Text(AppLocalizations.of(context)!.lang),
+                value: Text(AppLocalizations.of(context)!.lang_name),
+                onPressed: (context) async {
+                  await _showDialog(langList);
+                  _changeLang(context, langCode[returnNum]);
+                  returnNum = 0;
+                }
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(AppLocalizations.of(context)!.version + ': ' + version, style: TextStyle(fontSize: 15))
-          ]
-        ),
+              SettingsTile(
+                leading: Icon(Icons.color_lens, color: themeColor),
+                title: Text(AppLocalizations.of(context)!.themeColor),
+                onPressed: (context) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(AppLocalizations.of(context)!.pick_themeColor),
+                        content: SingleChildScrollView(
+                          child: BlockPicker(
+                            availableColors: [Colors.red,Colors.redAccent,Colors.purpleAccent,Colors.purple,
+                              Colors.deepPurple,Colors.indigo,Colors.blue,Colors.blueAccent,
+                              Colors.cyan,Colors.teal,Colors.green,Colors.lightGreen,
+                              Colors.greenAccent,Colors.yellow,Colors.orangeAccent,Colors.orange,
+                              Colors.deepOrange,Colors.brown,Colors.grey,Colors.blueGrey
+                            ],
+                            pickerColor: themeColor,
+                            onColorChanged: (newVal) {
+                              pickerColor = newVal;
+                            },
+                          ),
+                        ),
+                        actions: <Widget>[
+                          GestureDetector(
+                            child: Text(AppLocalizations.of(context)!.submit),
+                            onTap: () async {
+                              setState(() {
+                                themeColor = pickerColor;
+                              });
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.setInt('themeColor', pickerColor.value);
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ]
+          ),
+          SettingsSection(
+            title: Text('Unit and Symbol'),
+            tiles: <SettingsTile>[
+              SettingsTile.navigation(
+                leading: Icon(Icons.location_pin),
+                title: Text(AppLocalizations.of(context)!.distUnit),
+                value: Text(isMiles ? AppLocalizations.of(context)!.miles : AppLocalizations.of(context)!.kilometer),
+                onPressed: (context) async {
+                  await _showDialog([AppLocalizations.of(context)!.miles, AppLocalizations.of(context)!.kilometer]);
+                  await UserPreferences.setDistUnit(distUnit[returnNum]);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => super.widget)
+                  );
+                }
+              ),
+              SettingsTile.navigation(
+                leading: Icon(Icons.local_gas_station),
+                title: Text(AppLocalizations.of(context)!.capUnit),
+                value: Text(isGallon ? AppLocalizations.of(context)!.gallon : AppLocalizations.of(context)!.litter),
+                onPressed: (context) async {
+                  await _showDialog([AppLocalizations.of(context)!.gallon, AppLocalizations.of(context)!.litter]);
+                  await UserPreferences.setCapUnit(capUnit[returnNum]);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => super.widget)
+                  );
+                }
+              ),
+              SettingsTile.navigation(
+                leading: Icon(Icons.currency_exchange),//c
+                title: Text(AppLocalizations.of(context)!.currencySymbol),
+                value: Text(UserPreferences.getCurrencySymbol()),
+                onPressed: (context) async {
+                  await _showDialog(['\$', '\¥']);
+                  await UserPreferences.setCurrencySymbol(currencySymbol[returnNum]);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => super.widget)
+                  );
+                }
+              )
+            ]
+          ),
+          SettingsSection(
+            title: Text('Other'),
+            tiles: <SettingsTile>[
+              SettingsTile(
+                title: Text(AppLocalizations.of(context)!.delete_all, style: TextStyle(color: Colors.red)),
+                onPressed: (context) {
+                  showDialog(context: context, builder: (context) {
+                    return AlertDialog(
+                      title: Text(AppLocalizations.of(context)!.delete_all_alert),
+                      actions: <Widget>[
+                        GestureDetector(
+                          child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
+                          onTap: () async {
+                            await widget.isar.writeTxn(() async {
+                              await widget.isar.cars.where().deleteAll();
+                              await widget.isar.fuelings.where().deleteAll();
+                              await widget.isar.maintenances.where().deleteAll();
+                              await widget.isar.repairs.where().deleteAll();
+                            });
+                            Navigator.pushAndRemoveUntil( context,
+                                MaterialPageRoute(builder: (context) => MyApp(isar: widget.isar)), (_) => false
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          child: Text(AppLocalizations.of(context)!.cancel),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+                },
+              ),
+              SettingsTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(AppLocalizations.of(context)!.version),
+                value: Text(version)
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
