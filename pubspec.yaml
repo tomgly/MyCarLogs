@@ -109,16 +109,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
   fonts:
-    - family: MochiyPopOne
-      fonts:
-        - asset: assets/fonts/MochiyPopOne-Regular.ttf
-          style: normal
-          weight: 500
-    - family: Kosugi
-      fonts:
-        - asset: assets/fonts/Kosugi-Regular.ttf
-          style: normal
-          weight: 500
     - family: YuseiMagic
       fonts:
         - asset: assets/fonts/YuseiMagic-Regular.ttf

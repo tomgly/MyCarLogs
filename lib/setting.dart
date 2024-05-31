@@ -55,14 +55,6 @@ class _SettingPageState extends State<SettingPage> {
     MyApp.setLocale(context, newLocale);
   }
 
-  _showCheck(bool isCheck) {
-    if (isCheck) {
-      return Icon(Icons.check_rounded, color: Colors.blue);
-    } else {
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
