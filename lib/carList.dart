@@ -67,7 +67,6 @@ class _ListPageState extends State<ListPage> {
                     title: Text(car.name, style: TextStyle(color: Colors.black)),
                     subtitle: Text(AppLocalizations.of(context)!.color + ': ' + (car.color) + ', ' +
                         AppLocalizations.of(context)!.year + ': ' + (car.year)),
-                    //subtitle: Text('Color: ' + (car.color) + ', Year: ' + (car.year)),
                     tileColor: Color(0xffddffdd),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(25)),

@@ -21,12 +21,10 @@ class _AddCarPageState extends State<AddCarPage> {
   final yearController = TextEditingController();
   late bool isCapitalized;
   late Color themeColor;
-  bool menuVisible = false;
-  double sBox = 0.0;
-  List<String> itemList_en = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red', 'Other'];
-  List<String> itemList_ja = ['白', 'グレー', '黒', 'シルバー', '青', '赤', 'そのほか'];
-  List<String> itemList_es = ['Blanco', 'Gris', 'Negro', 'Plata', 'Azul', 'Rojo', 'Otro'];
-  List<String> itemList_pt = ['Branco', 'Cinza', 'Preto', 'Prata', 'Azul', 'Vermelho', 'Outro'];
+  List<String> itemList_en = ['White', 'Gray', 'Black', 'Silver', 'Blue', 'Red'];
+  List<String> itemList_ja = ['白', 'グレー', '黒', 'シルバー', '青', '赤'];
+  List<String> itemList_es = ['Blanco', 'Gris', 'Negro', 'Plata', 'Azul', 'Rojo'];
+  List<String> itemList_pt = ['Branco', 'Cinza', 'Preto', 'Prata', 'Azul', 'Vermelho'];
 
   @override
   void initState() {
@@ -46,9 +44,7 @@ class _AddCarPageState extends State<AddCarPage> {
 
   List<String> _setItemList() {
     final langCode = UserPreferences.getLangCode();
-    if (langCode == 'en') {
-      return itemList_en;
-    } else if (langCode == 'ja') {
+    if (langCode == 'ja') {
       return itemList_ja;
     } else if (langCode == 'es') {
       return itemList_es;
@@ -82,40 +78,28 @@ class _AddCarPageState extends State<AddCarPage> {
               ),
             ),
             const SizedBox(height: 8),
-            DropdownMenu(
-              width: 250,
-              hintText: AppLocalizations.of(context)!.color,
-              enableFilter: false,
-              requestFocusOnTap: true,
-              dropdownMenuEntries: _setItemList()
-                  .map(
-                    (item) => DropdownMenuEntry(
-                  value: item,
-                  label: item,
-                ),
-              ).toList(),
-              onSelected: (newVal) {
-                setState(() {
-                  colorController.text = newVal.toString();
-                  if (colorController.text == 'Other' || colorController.text == 'そのほか' ||
-                      colorController.text == 'Otro' || colorController.text == 'Outro') {
-                    menuVisible = true;
-                    colorController.text = '';
-                    sBox = 8;
+            TextField(
+              controller: colorController,
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.color,
+                border: OutlineInputBorder(),
+                suffixIcon: PopupMenuButton<String>(
+                  icon: Icon(Icons.color_lens),
+                  onSelected: (String color) {
+                    setState(() {
+                      colorController.text = color;
+                    });
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return _setItemList().map((String color) {
+                      return PopupMenuItem(
+                        child: Text(color),
+                        value: color,
+                      );
+                    }).toList();
                   }
-                });
-              },
-            ),
-            SizedBox(height: sBox),
-            Visibility(
-              visible: menuVisible,
-              child: TextField(
-                controller: colorController,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.color,
-                  border: OutlineInputBorder(),
-                ),
+                )
               ),
             ),
             const SizedBox(height: 8),
@@ -181,6 +165,7 @@ class _AddCarPageState extends State<AddCarPage> {
                     );
                   } else {
                     nameController.text = UserPreferences.capitalize(nameController.text);
+                    colorController.text = UserPreferences.capitalize(colorController.text);
                     final car = Car()
                       ..name = nameController.text
                       ..color = colorController.text
